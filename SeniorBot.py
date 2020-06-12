@@ -16,6 +16,7 @@ import os
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 FRIEND_LIST_PATH = os.path.join(THIS_FOLDER, 'userfriends.json')
+CONFIG_FILE_PATH = os.path.join(THIS_FOLDER, "botconfig.cfg")
 DATETIME_OBJ = datetime.datetime
 
 
@@ -30,10 +31,30 @@ class BotData:
         cfg_parser.read(path)
         self.BOT_PREFIX = cfg_parser['data']['prefix']
         self.TOKEN = cfg_parser['data']['token']
+    
+    def read_json(self, path:str):
+        if not os.path.exists(path):
+            creator = open(path, 'w+')
+            creator.close()
+        
+        f = open(path, 'r') 
+        f_str = f.read()
+        if len(f_str) >= 2:
+            if "{" != f_str[0] or "}" != f_str[-1]:
+                writer = open(path, 'w')
+                writer.write("{}")
+                writer.close()
+        else:
+            writer = open(path, 'w')
+            writer.write("{}")
+            writer.close()
+
+        f.close()
 
 
 BOT_DATA = BotData()
-BOT_DATA.read_config_data(THIS_FOLDER + "/botconfig.cfg")
+BOT_DATA.read_config_data(CONFIG_FILE_PATH)
+BOT_DATA.read_json(FRIEND_LIST_PATH)
 BOT = Bot(command_prefix=BOT_DATA.BOT_PREFIX, description="Bot by Raz Kissos, helper and useful functions.")
 BOT.remove_command('help')
 
