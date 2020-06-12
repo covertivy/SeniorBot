@@ -14,9 +14,9 @@ import requests
 import random
 import os
 
-THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-FRIEND_LIST_PATH = os.path.join(THIS_FOLDER, 'userfriends.json')
-CONFIG_FILE_PATH = os.path.join(THIS_FOLDER, "botconfig.cfg")
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__)) # Get relative path to our folder.
+FRIEND_LIST_PATH = os.path.join(THIS_FOLDER, 'userfriends.json') # Create path of friendlist json. (name can be changed)
+CONFIG_FILE_PATH = os.path.join(THIS_FOLDER, "botconfig.cfg") # Create path of config file. (name can be changed)
 DATETIME_OBJ = datetime.datetime
 
 
@@ -27,12 +27,22 @@ class BotData:
     STATUS = Status.online
 
     def read_config_data(self, path: str):
+        """[summary]
+        Reads the bot config info from the config file and stores it in the BotData class.
+        Args:
+            path (str): path to config file
+        """
         cfg_parser = configparser.ConfigParser()
         cfg_parser.read(path)
         self.BOT_PREFIX = cfg_parser['data']['prefix']
         self.TOKEN = cfg_parser['data']['token']
     
     def read_json(self, path:str):
+        """[summary]
+        Makes sure the friend list json file exists, if it doesn't exist the program will creat it itself.
+        Args:
+            path (str): path to friend list json file.
+        """
         if not os.path.exists(path):
             creator = open(path, 'w+')
             creator.close()
@@ -52,19 +62,18 @@ class BotData:
         f.close()
 
 
-BOT_DATA = BotData()
+BOT_DATA = BotData() # Our bot data object.
 BOT_DATA.read_config_data(CONFIG_FILE_PATH)
 BOT_DATA.read_json(FRIEND_LIST_PATH)
-BOT = Bot(command_prefix=BOT_DATA.BOT_PREFIX, description="Bot by Raz Kissos, helper and useful functions.")
-BOT.remove_command('help')
+BOT = Bot(command_prefix=BOT_DATA.BOT_PREFIX, description="Bot by Raz Kissos, helper and useful functions.") # Creat the discord bot.
+BOT.remove_command('help') # Remove default help command (we will replace it).
 
 
 @BOT.event
 async def on_ready():
-    """
-    this function sends a message in the program telling us the bot is up.
+    """[summary]
+    this function sends a message in the console telling us the bot is up.
     it also configures the bot's status and sends the data to the servers.
-    :return: none
     """
     BOT_DATA.BOT_NAME = BOT.user.name
     activity_info = activity.Activity(type=activity.ActivityType.watching, name= "4k child porn🍆", state="exhaustion", details="Extremly illegal but fuck it ;)")
@@ -74,7 +83,6 @@ async def on_ready():
 async def list_servers():
     """
     this function prints the connected server list every hour.
-    :return: none
     """
     await BOT.wait_until_ready()
     while not BOT.is_closed():
@@ -91,6 +99,11 @@ async def list_servers():
             aliases=["h"],
             description="Shows this help message.")
 async def help(ctx):
+    """[summary]
+    this function replaces the default help command from discord and sends a prettier and formatted help message.
+    Args:
+        ctx ([type]): the message context object.
+    """
     author = ctx.message.author
     embed = discord.Embed(color=discord.Color.dark_teal())
     embed.set_author(name="Senior Bot's Commands:")
@@ -105,11 +118,11 @@ async def help(ctx):
              aliases=['eight_ball', '8-ball', '8B']  # returns a random str for a deciding factor.
              )
 async def eight_ball(ctx):
-    """
+    """[summary]
     this function returns a random response to answer a question.
     the answer is picked in random frim a list of options.
-    :param ctx: context
-    :return: none
+    Args:
+        ctx ([type]): the message context object.
     """
     possible_responses = [
         'That is a resounding no',
@@ -127,11 +140,11 @@ async def eight_ball(ctx):
         aliases=["bc", "BC"]
     )  # returns the current bitcoin value in usd.
 async def bitcoin(ctx):
-    """
+    """[summary]
     this function grabs the bitcoin value json file from the bitcoin api
-    and sends the USD value to the server.
-    :param ctx: context
-    :return: none
+    and prints the USD value to the server.
+    Args:
+        ctx ([type]): the message context object.
     """
     url = "https://api.coindesk.com/v1/bpi/currentprice.json"
     response = requests.get(url)
@@ -148,12 +161,12 @@ async def bitcoin(ctx):
     aliases=["createname", "cn"]
 ) # returns a random name from an api.
 async def CreateName(ctx, gender : str):
-    """
+    """[summary]
     this function receivs a gender (f/m) and receivs a random name from the uinames api 
     according to the specified gender, creating a random name for the asker.
-    :param gender: str, the gender of the new name.
-    :param ctx: context
-    :return: none
+    Args:
+        ctx ([type]): the message context object.
+        gender (str): the gender of the generated name.
     """
     message = str()
     if gender == 'f':
@@ -180,13 +193,20 @@ async def CreateName(ctx, gender : str):
     """
 ) # return a random integer between the numbers given.
 async def RandInt(ctx, parameters:str):
+    """[summary]
+    Returns a random integer in a given range For example `~RandInt (10,20)`.
+    the first parameter is the bottom range and the second is the top range.
+    Args:
+        ctx ([type]): the message context object.
+        parameters (str): the range as a string for example (10,20).
+    """
     values = parameters[1:-1].replace(' ', '')
     values = values.split(',')
     if int(values[0]) < int(values[1]):
         try:
             await ctx.send("Random integer between {} and {}: {}".format(values[0], values[1], random.randint(int(values[0]), int(values[1]))))
         except:
-            await ctx.send("Invalid Parameters!")
+            await ctx.send("Invalid Parameters! check out {}help!".format(BOT_DATA.BOT_PREFIX))
     else:
         await ctx.send("Can not randomize a number with a min limit higher than the max limit!")
 
@@ -196,29 +216,25 @@ async def RandInt(ctx, parameters:str):
     aliases=["weather", "מזג-אויר"],
     description="Displays the current weather in kfar tavor.",
     brief="""
-    ~Weather\n Returns: The weather in kfar tavor is <weather type> with the temperature of <degrees> degrees.
+    ~Weather <lat>&<lon>. For example: ~Weather 62.3&46.9.
     """
-) # returns the current weather in kfar tavor.
-async def Weather(ctx):
+) # returns the current weather in a certain coordination.
+async def Weather(ctx, coords:str):
+    """[summary]
+    Asks this shitty weather api for the current weather in a certain coord.
+    check out 'https://fcc-weather-api.glitch.me/' for more info on response format.
+    Args:
+        ctx ([type]): the message context object.
+        coords (str): latitude and longitude parameters in the format "<lat>&<lon>" for example: "44.1213&12.65".
     """
-    Kfar Tavor:
-        Latitude: 32.687346°
-        Longitude: 35.419972°
-    """
-    try:
-        url = "https://fcc-weather-api.glitch.me/api/current?lat=32.68&lon=35.42"
-        response = json.loads(requests.get(url).content)
-    except Exception as e:
-        print( 
-            """
-            * * *
-            ERROR: {}
-            * * *
-            """.format(str(e)))
-    finally:
-        weather_type = response["weather"][0]["main"] + " ({})".format( response["weather"][0]["description"])
-        temp = str(response["main"]["temp"]) + "°"
-        await ctx.send("The weather in kfar tavor today is {} and the temperature is {}.".format(weather_type, temp))
+    if '&' not in coords:
+        await ctx.send("Message format wrong! check out ~help!")
+    lat_lon = (float(coords.split('&')[0]), float(coords.split('&')[1]))
+    url = "https://fcc-weather-api.glitch.me/api/current?lat={}&lon={}".format(lat_lon[0], lat_lon[1])
+    response = json.loads(requests.get(url).content)
+    weather_type = response["weather"][0]["main"] + " ({})".format( response["weather"][0]["description"])
+    temp = str(response["main"]["temp"]) + "°"
+    await ctx.send("The weather in kfar tavor today is {} and the temperature is {}.".format(weather_type, temp))
 
 
 @BOT.command(
@@ -230,6 +246,13 @@ async def Weather(ctx):
     """
 )
 async def looking_to_play(ctx, game: str):
+    """[summary]
+    Sends all your listed friends a request to play a given game.
+    To add friends look for add_friend function.
+    Args:
+        ctx ([type]): the message context object.
+        game (str): the game name you wish to play.
+    """
     f = open(FRIEND_LIST_PATH, "r")
     data = json.loads(f.read()) # get the user friend data.
     if str(ctx.author.id) not in data:
@@ -262,6 +285,15 @@ async def looking_to_play(ctx, game: str):
     """
     )
 async def add_friend(ctx, user : discord.User):
+    """[summary]
+    Adds a user to your friend list which is used in the looking_to_play function.
+    Args:
+        ctx ([type]): the message context.
+        user (discord.User): the tag of the user you wish to add. @BobbyBoy.
+
+    Raises:
+        Exception: if parameters are invalid.
+    """
     if len(ctx.message.mentions) == 1:
         mentioned_user = user.id
         read_obj = open(FRIEND_LIST_PATH, "r")
@@ -280,11 +312,10 @@ async def add_friend(ctx, user : discord.User):
 
         write_obj = open(FRIEND_LIST_PATH, "w")
         write_obj.write(json.dumps(data))
+        read_obj.close()
+        write_obj.close()
     else:
-        raise Exception("invalid parameters!")
-    
-    read_obj.close()
-    write_obj.close()
+        await ctx.channel.send("Parameters invalid! check out {}help".format(BOT_DATA.BOT_PREFIX))
 
 
 @BOT.command(
@@ -294,6 +325,12 @@ async def add_friend(ctx, user : discord.User):
     brief="~rmf @Bob\n"
 )
 async def remove_friend(ctx, user : discord.User):
+    """[summary]
+    Removes a friend from your friend list.
+    Args:
+        ctx ([type]): the message context object.
+        user (discord.User): the mention of the user you want to remove.
+    """
     if len(ctx.message.mentions) == 1:
         mentioned_user = user.id
         read_obj = open(FRIEND_LIST_PATH, "r")
@@ -311,7 +348,7 @@ async def remove_friend(ctx, user : discord.User):
         write_obj = open(FRIEND_LIST_PATH, "w")
         write_obj.write(json.dumps(data))
     else:
-        raise Exception("invalid parameters!")
+        await ctx.channel.send("invalid parameters! check out {}help!".format(BOT_DATA.BOT_PREFIX))
     
     read_obj.close()
     write_obj.close()
@@ -324,35 +361,37 @@ async def remove_friend(ctx, user : discord.User):
     brief="~my_friends\n"
 )
 async def my_friends(ctx):
+    """[summary]
+    Prints a list of mentions of the users in you friend list.
+    Args:
+        ctx ([type]): the message context object.
+    """
     read_obj = open(FRIEND_LIST_PATH, "r")
     data = json.loads(read_obj.read())
     if (str(ctx.author.id) in data):
         if len(data[str(ctx.author.id)]) == 0:
             await ctx.channel.send("Too bad! seems you are lonely as fuck and do not have any friends!")
         else:
-            output_str = ""
+            embed = discord.Embed(color=discord.Color.dark_teal())
+            embed.set_author(name="These are your current friends:")
             for friend in data[str(ctx.author.id)]:
                 friend_obj = await BOT.fetch_user(friend)
-                output_str += "\t- " + friend_obj.mention + "\n"
-            
-            await ctx.channel.send("{} your current friends are:\n{}".format((ctx.author.mention), output_str))
+                embed.add_field(name="--------------------", value="\t🔳" + friend_obj.mention, inline=False)
+            await ctx.channel.send(ctx.author.mention, embed=embed)
     else:
         await ctx.channel.send("Too bad! seems you are lonely as fuck and do not have any friends!")
 
-"""
-@BOT.command(
-    name="block_user",
-    aliases=["block", "blk"],
-    description="Forbids the user from sending you game invites.",
-    brief="~block @Bob\n"
-)
-async def block_user(ctx, user : discord.User):
-"""
 
 @BOT.event
 async def on_command_error(ctx, error):
+    """[summary]
+    Excepts every error the bot receivs and prints it to the console.
+    Args:
+        ctx ([type]): the message context object.
+        error ([type]): the excepted error. 
+    """
     print("""----------/\\/\\/\\/\\/\\/\\/\\/\\/\\----------\n~ ERROR: {}\n----------\\/\\/\\/\\/\\/\\/\\/\\/\\/----------""".format(error))
 
 
-BOT.loop.create_task(list_servers())
-BOT.run(BOT_DATA.TOKEN)
+BOT.loop.create_task(list_servers()) # Run the list_servers() function as an asynchronous coroutine.
+BOT.run(BOT_DATA.TOKEN) # Run the bot.
