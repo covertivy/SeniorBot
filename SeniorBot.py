@@ -234,7 +234,7 @@ async def Weather(ctx, coords:str):
     response = json.loads(requests.get(url).content)
     weather_type = response["weather"][0]["main"] + " ({})".format( response["weather"][0]["description"])
     temp = str(response["main"]["temp"]) + "°"
-    await ctx.send("The weather in kfar tavor today is {} and the temperature is {}.".format(weather_type, temp))
+    await ctx.send("The weather in {} today is {} and the temperature is {}.".format(coords, weather_type, temp))
 
 
 @BOT.command(
