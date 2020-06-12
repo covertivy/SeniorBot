@@ -65,7 +65,7 @@ class BotData:
 BOT_DATA = BotData() # Our bot data object.
 BOT_DATA.read_config_data(CONFIG_FILE_PATH)
 BOT_DATA.read_json(FRIEND_LIST_PATH)
-BOT = Bot(command_prefix=BOT_DATA.BOT_PREFIX, description="Bot by Raz Kissos, helper and useful functions.") # Creat the discord bot.
+BOT = Bot(command_prefix=BOT_DATA.BOT_PREFIX, description="Bot by Raz Kissos, helper and useful functions.") # Create the discord bot.
 BOT.remove_command('help') # Remove default help command (we will replace it).
 
 
