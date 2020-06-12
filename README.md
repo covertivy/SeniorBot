@@ -12,4 +12,4 @@ of a 'friend system', you can add and remove friends, invite them to play etc...
 token = **<your bot token>**
 prefix = **<your bot prefix>**
 ```
-**and place both files in the file you run your file in.**
+**and place both files in the folder you run your file in.**
