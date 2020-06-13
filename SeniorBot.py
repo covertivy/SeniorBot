@@ -79,7 +79,7 @@ async def on_ready():
     it also configures the bot's status and sends the data to the servers.
     """
     BOT_DATA.BOT_NAME = BOT.user.name
-    activity_info = activity.Activity(type=activity.ActivityType.listening, name= "~help")
+    activity_info = activity.Activity(type=activity.ActivityType.listening, name= "{}help".format(BOT_DATA.BOT_PREFIX))
     await BOT.change_presence(activity=activity_info, status= BOT_DATA.STATUS)
 
 
