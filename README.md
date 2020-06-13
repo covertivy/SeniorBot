@@ -17,4 +17,4 @@ prefix = **<your bot prefix>**
 ```
 **and place the config file in the folder you run your bot file in. Also make sure you `pip install` each and every module used in the code to avoid errors!**
 
-# If you need any help I will be happy to supply it, you can contact me via the email kissosrazz@gmail.com
+# If you need any help I will be happy to supply it.
