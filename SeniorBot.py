@@ -115,6 +115,15 @@ async def help(ctx):
     await ctx.send(author.mention, embed=embed)
 
 
+@BOT.command(name='coinflip',
+             description="Returns heads/tails.",
+             brief="Excessicve coin flipper",
+             aliases=['flip', 'coin']  # returns a random str for a deciding factor.
+             )
+async def eight_ball(ctx):
+    await ctx.send(ctx.message.author.mention + " " + random.choice(['🧿Heads', '🧿Tails']))
+
+
 @BOT.command(name='8ball',
              description="Answers a yes/no question.",
              brief="Answers from the beyond...",
@@ -153,7 +162,7 @@ async def bitcoin(ctx):
     response = requests.get(url)
     value = response.json()['bpi']['USD']['rate']
 
-    await ctx.send("Bitcoin Value is: " + value + " USD")
+    await ctx.send("1₿ = " + value + "💲")
 
 
 @BOT.command(
