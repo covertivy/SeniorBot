@@ -1,3 +1,6 @@
+# Creator: Raz Kissos.
+# GitHub page: 'https://github.com/RazKissos/SeniorBot'.
+
 from discord.ext.commands import Bot
 from discord.ext import commands
 from discord import Game
@@ -76,7 +79,7 @@ async def on_ready():
     it also configures the bot's status and sends the data to the servers.
     """
     BOT_DATA.BOT_NAME = BOT.user.name
-    activity_info = activity.Activity(type=activity.ActivityType.watching, name= "4k child porn🍆", state="exhaustion", details="Extremly illegal but fuck it ;)")
+    activity_info = activity.Activity(type=activity.ActivityType.listening, name= "{}help".format(BOT_DATA.BOT_PREFIX))
     await BOT.change_presence(activity=activity_info, status= BOT_DATA.STATUS)
 
 
@@ -110,6 +113,15 @@ async def help(ctx):
     for cmd in BOT.commands:
         embed.add_field(name= str("♿|~**" + cmd.name + "**: "), value=str(cmd.description + "\n👀|Aliases: " + str(cmd.aliases)), inline=False)
     await ctx.send(author.mention, embed=embed)
+
+
+@BOT.command(name='coinflip',
+             description="Returns heads/tails.",
+             brief="Excessicve coin flipper",
+             aliases=['flip', 'coin']  # returns a random str for a deciding factor.
+             )
+async def eight_ball(ctx):
+    await ctx.send(ctx.message.author.mention + " " + random.choice(['🧿Heads', '🧿Tails']))
 
 
 @BOT.command(name='8ball',
@@ -150,7 +162,7 @@ async def bitcoin(ctx):
     response = requests.get(url)
     value = response.json()['bpi']['USD']['rate']
 
-    await ctx.send("Bitcoin Value is: " + value + " USD")
+    await ctx.send("1₿ = " + value + "💲")
 
 
 @BOT.command(
@@ -234,7 +246,7 @@ async def Weather(ctx, coords:str):
     response = json.loads(requests.get(url).content)
     weather_type = response["weather"][0]["main"] + " ({})".format( response["weather"][0]["description"])
     temp = str(response["main"]["temp"]) + "°"
-    await ctx.send("The weather in kfar tavor today is {} and the temperature is {}.".format(weather_type, temp))
+    await ctx.send("The weather in {} today is {} and the temperature is {}.".format(coords, weather_type, temp))
 
 
 @BOT.command(
