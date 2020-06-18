@@ -115,6 +115,39 @@ async def help(ctx):
     await ctx.send(author.mention, embed=embed)
 
 
+@BOT.command(name='clean',
+             description="Cleans all the messages the target has sent in the channel the command was sent in. (pinned messages stay)",
+             brief="Chat cleaner.",
+             )
+async def clean(ctx, user:discord.User):
+    iterator = ctx.channel.history()
+    counter = 0
+    while True:
+        try:
+            msg = await iterator.next()
+        except:
+            print("Deleted {} messages from channel {}".format(counter, ctx.channel.name))
+            return
+        if len(ctx.message.mentions) == 1:
+            user_obj = await BOT.fetch_user(user.id)
+            if msg.author == user_obj and not msg.pinned:
+                await msg.delete()
+                counter += 1
+        else:
+            await ctx.channel.send("Can only delete 1 user's messages at a time!")
+            return
+        
+
+
+@BOT.command(name='coinflip',
+             description="Returns heads/tails.",
+             brief="Excessicve coin flipper",
+             aliases=['flip', 'coin']
+             )
+async def coinflip(ctx):
+    await ctx.send(ctx.message.author.mention + " " + random.choice(['🧿Heads', '🧿Tails']))
+
+
 @BOT.command(name='8ball',
              description="Answers a yes/no question.",
              brief="Answers from the beyond...",
@@ -153,7 +186,7 @@ async def bitcoin(ctx):
     response = requests.get(url)
     value = response.json()['bpi']['USD']['rate']
 
-    await ctx.send("Bitcoin Value is: " + value + " USD")
+    await ctx.send("1₿ = " + value + "💲")
 
 
 @BOT.command(
