@@ -432,5 +432,19 @@ async def on_command_error(ctx, error):
     print("""----------/\\/\\/\\/\\/\\/\\/\\/\\/\\----------\n~ ERROR: {}\n----------\\/\\/\\/\\/\\/\\/\\/\\/\\/----------""".format(error))
 
 
-BOT.loop.create_task(list_servers()) # Run the list_servers() function as an asynchronous coroutine.
+async def console():
+    await BOT.wait_until_ready()
+    while True:
+        try:
+            command = input(">").lower()
+            if command == "exit":
+                await BOT.close()
+                return
+            elif command == "help":
+                print("Console commands:\n\t- exit: close the bot.\n\t- help: show this help message.")
+        except Exception as e:
+            print(e)
+
+asyncio.ensure_future(list_servers()) # Run the list_servers() function as an asynchronous coroutine.
+asyncio.ensure_future(console()) # Run the console as a coroutine.
 BOT.run(BOT_DATA.TOKEN) # Run the bot.
