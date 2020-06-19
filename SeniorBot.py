@@ -7,7 +7,6 @@ from discord import Game
 from discord import Status
 from discord import activity
 import configparser
-import traceback
 import datetime
 import discord
 import json
@@ -120,6 +119,14 @@ async def help(ctx):
              brief="Chat cleaner.",
              )
 async def clean(ctx, user:discord.User):
+    user_obj = None
+    if len(ctx.message.mentions) == 1:
+        if (user_obj := await BOT.fetch_user(user.id)) == None:
+            await ctx.channel.send("Invalid user passed!")
+            return
+    else:
+        await ctx.channel.send("Can only delete 1 user's messages at a time!")
+        return
     iterator = ctx.channel.history()
     counter = 0
     while True:
@@ -128,14 +135,10 @@ async def clean(ctx, user:discord.User):
         except:
             print("Deleted {} messages from channel {}".format(counter, ctx.channel.name))
             return
-        if len(ctx.message.mentions) == 1:
-            user_obj = await BOT.fetch_user(user.id)
-            if msg.author == user_obj and not msg.pinned:
-                await msg.delete()
-                counter += 1
-        else:
-            await ctx.channel.send("Can only delete 1 user's messages at a time!")
-            return
+        if msg.author == user_obj and not msg.pinned:
+            await msg.delete()
+            counter += 1
+        
         
 
 
