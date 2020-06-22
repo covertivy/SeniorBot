@@ -140,8 +140,6 @@ async def clean(ctx, user:discord.User):
         if msg.author == user_obj and not msg.pinned:
             await msg.delete()
             counter += 1
-        
-        
 
 
 @BOT.command(name='coinflip',
