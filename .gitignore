@@ -536,3 +536,4 @@ MigrationBackup/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudio,visualstudiocode,c++
 .vscode/settings.json
+.vscode/launch.json
