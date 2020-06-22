@@ -7,7 +7,6 @@ from discord import Game
 from discord import Status
 from discord import activity
 import configparser
-import traceback
 import datetime
 import discord
 import json
@@ -120,6 +119,14 @@ async def help(ctx):
              brief="Chat cleaner.",
              )
 async def clean(ctx, user:discord.User):
+    user_obj = None
+    if len(ctx.message.mentions) == 1:
+        if (user_obj := await BOT.fetch_user(user.id)) == None:
+            await ctx.channel.send("Invalid user passed!")
+            return
+    else:
+        await ctx.channel.send("Can only delete 1 user's messages at a time!")
+        return
     iterator = ctx.channel.history()
     counter = 0
     while True:
@@ -128,14 +135,10 @@ async def clean(ctx, user:discord.User):
         except:
             print("Deleted {} messages from channel {}".format(counter, ctx.channel.name))
             return
-        if len(ctx.message.mentions) == 1:
-            user_obj = await BOT.fetch_user(user.id)
-            if msg.author == user_obj and not msg.pinned:
-                await msg.delete()
-                counter += 1
-        else:
-            await ctx.channel.send("Can only delete 1 user's messages at a time!")
-            return
+        if msg.author == user_obj and not msg.pinned:
+            await msg.delete()
+            counter += 1
+        
         
 
 
@@ -429,5 +432,19 @@ async def on_command_error(ctx, error):
     print("""----------/\\/\\/\\/\\/\\/\\/\\/\\/\\----------\n~ ERROR: {}\n----------\\/\\/\\/\\/\\/\\/\\/\\/\\/----------""".format(error))
 
 
-BOT.loop.create_task(list_servers()) # Run the list_servers() function as an asynchronous coroutine.
+async def console():
+    await BOT.wait_until_ready()
+    while True:
+        try:
+            command = input(">").lower()
+            if command == "exit":
+                await BOT.close()
+                return
+            elif command == "help":
+                print("Console commands:\n\t- exit: close the bot.\n\t- help: show this help message.")
+        except Exception as e:
+            print(e)
+
+asyncio.ensure_future(list_servers()) # Run the list_servers() function as an asynchronous coroutine.
+asyncio.ensure_future(console()) # Run the console as a coroutine.
 BOT.run(BOT_DATA.TOKEN) # Run the bot.
