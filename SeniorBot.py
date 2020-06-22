@@ -81,6 +81,12 @@ async def on_ready():
     activity_info = activity.Activity(type=activity.ActivityType.listening, name= "{}help".format(BOT_DATA.BOT_PREFIX))
     await BOT.change_presence(activity=activity_info, status= BOT_DATA.STATUS)
 
+def print_guilds():
+    print("********************")
+    print("Current servers: ")
+    for server in BOT.guilds:
+        print("- " + server.name)
+    print("********************")
 
 async def list_servers():
     """
@@ -88,12 +94,8 @@ async def list_servers():
     """
     await BOT.wait_until_ready()
     while not BOT.is_closed():
-        print("*****************")
-        print("Current servers: ")
-        for server in BOT.guilds:
-            print("- " + server.name)
-        print("*****************")
-        print("{}\nBot by Marse, helper and useful functions.\nRunning bot {}\nFriend list json file path: {}\n********\n".format(DATETIME_OBJ.today(), BOT_DATA.BOT_NAME, FRIEND_LIST_PATH))
+        print_guilds()
+        print("{}\nBot by Marse, helper and useful functions.\nRunning bot {}\nFriend list json file path: {}\n********************\n".format(DATETIME_OBJ.today(), BOT_DATA.BOT_NAME, FRIEND_LIST_PATH))
         await asyncio.sleep(3600)
 
 
@@ -434,14 +436,25 @@ async def on_command_error(ctx, error):
 
 async def console():
     await BOT.wait_until_ready()
+    commands = [("help","shows this help message"), ("exit","closes the bot"), ("guilds", "prints the current guilds the bot is on"), 
+                ("botinfo", "returns the bot's basic information")]
     while True:
         try:
             command = input(">").lower()
-            if command == "exit":
+            
+            if command == commands[0][0]: # help console command.
+                print("Console commands:")
+                for cmd in commands:
+                    print("\t-" + cmd[0] + ": " + cmd[1] + ".")
+            elif command == commands[1][0]: # exit console command.
                 await BOT.close()
                 return
-            elif command == "help":
-                print("Console commands:\n\t- exit: close the bot.\n\t- help: show this help message.")
+            elif command == commands[2][0]: # guilds console command.
+                print_guilds()
+            elif command == commands[3][0]: # botinfo console command.
+                print("********************")
+                print("~BOT BY MARSE~\n-Prefix: {}\n-Token: {}\n-Friend List Path: {}".format(BOT_DATA.BOT_PREFIX, BOT_DATA.TOKEN, FRIEND_LIST_PATH))
+                print("********************")
         except Exception as e:
             print(e)
 
