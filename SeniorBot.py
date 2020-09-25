@@ -98,7 +98,52 @@ async def list_servers():
         print("{}\nBot by Marse, helper and useful functions.\nRunning bot {}\nFriend list json file path: {}\n********************\n".format(DATETIME_OBJ.today(), BOT_DATA.BOT_NAME, FRIEND_LIST_PATH))
         await asyncio.sleep(3600)
 
+@BOT.event
+async def on_command_error(ctx, error):
+    """[summary]
+    Excepts every error the bot receivs and prints it to the console.
+    Args:
+        ctx ([type]): the message context object.
+        error ([type]): the excepted error. 
+    """
+    print("[!] ERROR: {}\n".format(error))
 
+
+# Console not working for now.
+async def console():
+    await BOT.wait_until_ready()
+    commands = [("help","shows this help message"), ("exit","closes the bot"), ("guilds", "prints the current guilds the bot is on"), 
+                ("botinfo", "returns the bot's basic information")]
+    while True:
+        try:
+            command = input(">").lower()
+            
+            if command == commands[0][0]: # help console command.
+                print("Console commands:")
+                for cmd in commands:
+                    print("\t-" + cmd[0] + ": " + cmd[1] + ".")
+            elif command == commands[1][0]: # exit console command.
+                await BOT.close()
+                return
+            elif command == commands[2][0]: # guilds console command.
+                print_guilds()
+            elif command == commands[3][0]: # botinfo console command.
+                print("********************")
+                print("~BOT BY MARSE~\n-Prefix: {}\n-Token: {}\n-Friend List Path: {}".format(BOT_DATA.BOT_PREFIX, BOT_DATA.TOKEN, FRIEND_LIST_PATH))
+                print("********************")
+        except Exception as e:
+            print(e)
+
+
+# Create Asynchronous tasks for the bot before running:
+
+asyncio.ensure_future(list_servers()) # Run the list_servers() function as an asynchronous coroutine.
+# asyncio.ensure_future(console()) # Run the console as a coroutine. (Not Working for now)
+
+
+###########################################################################################################################################################################
+###############################################################| Server Dedicated Commands |###############################################################################
+###########################################################################################################################################################################
 @BOT.command(name="help",
             aliases=["h"],
             description="Shows this help message.")
@@ -164,6 +209,9 @@ async def clean_error(ctx, error):
         await ctx.channel.send("{} Only Administrators can use this command!".format(ctx.message.author.mention))
 
 
+###########################################################################################################################################################################
+#################################################################| Fun and Useful Commands |###############################################################################
+###########################################################################################################################################################################
 @BOT.command(name='coinflip',
              description="Returns heads/tails.",
              brief="Excessicve coin flipper",
@@ -250,10 +298,10 @@ async def CreateName(ctx, gender : str):
     aliases=["RandI", "RInt", "RI"],
     description="Returns a random integer in a given range.",
     brief="""
-    ~RandInt (<num1>,<num2>).\n For example ~RandInt (10,20).
+    ~RandInt (<num1>,<num2>).\n For example ~RandInt <bottom limit> <top limit>.
     """
 ) # return a random integer between the numbers given.
-async def RandInt(ctx, parameters:str):
+async def RandInt(ctx, bottom:int, top:int):
     """[summary]
     Returns a random integer in a given range For example `~RandInt (10,20)`.
     the first parameter is the bottom range and the second is the top range.
@@ -261,11 +309,9 @@ async def RandInt(ctx, parameters:str):
         ctx ([type]): the message context object.
         parameters (str): the range as a string for example (10,20).
     """
-    values = parameters[1:-1].replace(' ', '')
-    values = values.split(',')
-    if int(values[0]) < int(values[1]):
+    if bottom < top:
         try:
-            await ctx.send("Random integer between {} and {}: {}".format(values[0], values[1], random.randint(int(values[0]), int(values[1]))))
+            await ctx.send("Random integer between {} and {}: {}".format(bottom, top, random.randint(bottom, top)))
         except:
             await ctx.send("Invalid Parameters! check out {}help!".format(BOT_DATA.BOT_PREFIX))
     else:
@@ -297,7 +343,9 @@ async def Weather(ctx, coords:str):
     temp = str(response["main"]["temp"]) + "°"
     await ctx.send("The weather in {} today is {} and the temperature is {}.".format(coords, weather_type, temp))
 
-
+###########################################################################################################################################################################
+##################################################################| Custom Friend Commands |###############################################################################
+###########################################################################################################################################################################
 @BOT.command(
     name="looking_to_play",
     aliases=["ltp", "play_with_me", "pwm"],
@@ -442,42 +490,5 @@ async def my_friends(ctx):
     else:
         await ctx.channel.send("Too bad! seems you are lonely as fuck and do not have any friends!")
 
-
-@BOT.event
-async def on_command_error(ctx, error):
-    """[summary]
-    Excepts every error the bot receivs and prints it to the console.
-    Args:
-        ctx ([type]): the message context object.
-        error ([type]): the excepted error. 
-    """
-    print("[!] ERROR: {}\n".format(error))
-
-
-async def console():
-    await BOT.wait_until_ready()
-    commands = [("help","shows this help message"), ("exit","closes the bot"), ("guilds", "prints the current guilds the bot is on"), 
-                ("botinfo", "returns the bot's basic information")]
-    while True:
-        try:
-            command = input(">").lower()
-            
-            if command == commands[0][0]: # help console command.
-                print("Console commands:")
-                for cmd in commands:
-                    print("\t-" + cmd[0] + ": " + cmd[1] + ".")
-            elif command == commands[1][0]: # exit console command.
-                await BOT.close()
-                return
-            elif command == commands[2][0]: # guilds console command.
-                print_guilds()
-            elif command == commands[3][0]: # botinfo console command.
-                print("********************")
-                print("~BOT BY MARSE~\n-Prefix: {}\n-Token: {}\n-Friend List Path: {}".format(BOT_DATA.BOT_PREFIX, BOT_DATA.TOKEN, FRIEND_LIST_PATH))
-                print("********************")
-        except Exception as e:
-            print(e)
-
-asyncio.ensure_future(list_servers()) # Run the list_servers() function as an asynchronous coroutine.
-# asyncio.ensure_future(console()) # Run the console as a coroutine.
+# Finally, Run the Bot!
 BOT.run(BOT_DATA.TOKEN) # Run the bot.
