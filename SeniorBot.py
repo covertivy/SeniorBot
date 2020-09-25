@@ -1,11 +1,18 @@
-# Creator: Raz Kissos.
-# GitHub page: 'https://github.com/RazKissos/SeniorBot'.
+###########################################################################################
+#                     _____            _             ______       _                       #
+#                    /  ___|          (_)            | ___ \     | |                      #
+#                    \ `--.  ___ _ __  _  ___  _ __  | |_/ / ___ | |_                     #
+#                     `--. \/ _ \ '_ \| |/ _ \| '__| | ___ \/ _ \| __|                    #
+#                    /\__/ /  __/ | | | | (_) | |    | |_/ / (_) | |_                     #
+#                    \____/ \___|_| |_|_|\___/|_|    \____/ \___/ \__|                    #
+#                                                                                         #
+#                                 Creator: Raz Kissos                                     #
+#                    GitHub page: https://github.com/RazKissos/SeniorBot                  #
+###########################################################################################
 
 from discord.ext.commands import Bot, has_permissions, has_role, CheckFailure
+from discord import Game, activity, Status
 from discord.ext import commands
-from discord import Game
-from discord import Status
-from discord import activity
 import configparser
 import datetime
 import discord
