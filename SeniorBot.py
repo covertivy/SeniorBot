@@ -1,7 +1,7 @@
 # Creator: Raz Kissos.
 # GitHub page: 'https://github.com/RazKissos/SeniorBot'.
 
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, has_permissions, has_role, CheckFailure
 from discord.ext import commands
 from discord import Game
 from discord import Status
@@ -117,29 +117,51 @@ async def help(ctx):
 
 
 @BOT.command(name='clean',
-             description="Cleans all the messages the target has sent in the channel the command was sent in. (pinned messages stay)",
+             description="Cleans a given amount of messages sent by the tagged user (If message amount is not specified automatically selects 100)",
              brief="Chat cleaner.",
+             pass_context=True
              )
-async def clean(ctx, user:discord.User):
+@has_permissions(administrator=True)
+async def clean(ctx, user:discord.User, count:int=100):
+    if count < 1:
+        await ctx.channel.send("Zero or Negative amount of messages to delete was given!")
+        return
     user_obj = None
-    if len(ctx.message.mentions) == 1:
+    if len(ctx.message.mentions) != 1:
+        await ctx.channel.send("Can only delete 1 user's messages at a time!")
+        return
+    else:
         if (user_obj := await BOT.fetch_user(user.id)) == None:
             await ctx.channel.send("Invalid user passed!")
             return
-    else:
-        await ctx.channel.send("Can only delete 1 user's messages at a time!")
-        return
     iterator = ctx.channel.history()
     counter = 0
-    while True:
+    msg_list = []
+    while counter < count:
         try:
             msg = await iterator.next()
+            if msg.author == user_obj:
+                msg_list.append(msg)
+                counter += 1
         except:
-            print("Deleted {} messages from channel {}".format(counter, ctx.channel.name))
-            return
-        if msg.author == user_obj and not msg.pinned:
+            try:
+                for msg in msg_list:
+                    await msg.delete()
+                print("Deleted {} messages from channel {}".format(counter, ctx.channel.name))
+                return
+            except:
+                return
+    try:
+        for msg in msg_list:
             await msg.delete()
-            counter += 1
+        print("Deleted {} messages from channel {}".format(counter, ctx.channel.name))
+    except:
+        return
+
+@clean.error
+async def clean_error(ctx, error):
+    if isinstance(error, CheckFailure): # Check if the error was caused by missing permissions error.
+        await ctx.channel.send("{} Only Administrators can use this command!".format(ctx.message.author.mention))
 
 
 @BOT.command(name='coinflip',
@@ -252,8 +274,8 @@ async def RandInt(ctx, parameters:str):
 
 @BOT.command(
     name="Weather",
-    aliases=["weather", "מזג-אויר"],
-    description="Displays the current weather in kfar tavor.",
+    aliases=["weather"],
+    description="Displays the current weather in given coordinates.",
     brief="""
     ~Weather <lat>&<lon>. For example: ~Weather 62.3&46.9.
     """
@@ -429,7 +451,7 @@ async def on_command_error(ctx, error):
         ctx ([type]): the message context object.
         error ([type]): the excepted error. 
     """
-    print("""----------/\\/\\/\\/\\/\\/\\/\\/\\/\\----------\n~ ERROR: {}\n----------\\/\\/\\/\\/\\/\\/\\/\\/\\/----------""".format(error))
+    print("[!] ERROR: {}\n".format(error))
 
 
 async def console():
@@ -457,5 +479,5 @@ async def console():
             print(e)
 
 asyncio.ensure_future(list_servers()) # Run the list_servers() function as an asynchronous coroutine.
-asyncio.ensure_future(console()) # Run the console as a coroutine.
+# asyncio.ensure_future(console()) # Run the console as a coroutine.
 BOT.run(BOT_DATA.TOKEN) # Run the bot.
