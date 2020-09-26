@@ -211,7 +211,38 @@ async def clean_error(ctx, error):
     if isinstance(error, CheckFailure): # Check if the error was caused by missing permissions error.
         await ctx.channel.send("{} Only Administrators can use this command!".format(ctx.message.author.mention))
 
+    
+@BOT.command(name='ban',
+             description="Bans the tagged user and supplies a reason",
+             pass_context=True
+             )
+@has_permissions(administrator=True)
+async def ban(ctx, member:discord.Member, reason:str):
+    if member in ctx.guid.members:
+        member.ban(reason=reason)
+    else:
+        await ctx.channel.send("User is not in the server!")
+@ban.error
+async def ban_error(ctx, error):
+    if isinstance(error, CheckFailure): # Check if the error was caused by missing permissions error.
+        await ctx.channel.send("{} Only Administrators can use this command!".format(ctx.message.author.mention))
 
+"""
+@BOT.command(name='unban',
+             description="UnBans the tagged user and supplies a reason",
+             pass_context=True
+             )
+@has_permissions(administrator=True)
+async def unban(ctx, member:discord.Member):
+    if member in ctx.guid.members:
+        member.unban()
+    else:
+        await ctx.channel.send("User is not banned!")
+@ban.error
+async def unban_error(ctx, error):
+    if isinstance(error, CheckFailure): # Check if the error was caused by missing permissions error.
+        await ctx.channel.send("{} Only Administrators can use this command!".format(ctx.message.author.mention))
+"""
 ###########################################################################################################################################################################
 #################################################################| Fun and Useful Commands |###############################################################################
 ###########################################################################################################################################################################
