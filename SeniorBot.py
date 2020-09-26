@@ -10,7 +10,7 @@
 #                    GitHub page: https://github.com/RazKissos/SeniorBot                  #
 ###########################################################################################
 
-from discord.ext.commands import Bot, has_permissions, has_role, CheckFailure
+from discord.ext.commands import Bot, CheckFailure, CommandError
 from discord import Game, activity, Status
 from discord.ext import commands
 import configparser
@@ -172,36 +172,36 @@ async def help(ctx):
              description="Bans the tagged user and supplies a reason",
              pass_context=True
              )
-@has_permissions(administrator=True)
-async def ban(ctx, member:discord.Member, reason:str):
+@commands.has_permissions(ban_members=True)
+async def ban(ctx, member:discord.Member, *,reason:str):
     if member in ctx.guild.members:
-        await ctx.channel.send(f"Banned the user {member.mention} for reason: \"{reason}\"")
         await member.ban(reason=reason)
+        await ctx.channel.send(f"Banned the user {member.mention} for reason: \"{reason}\"")
     else:
         await ctx.channel.send("User is not in the server!")
 @ban.error
 async def ban_error(ctx, error):
-    if isinstance(error, CheckFailure): # Check if the error was caused by missing permissions error.
-        await ctx.channel.send("{} Only Administrators can use this command!".format(ctx.message.author.mention))
+    if isinstance(error, commands.CheckFailure): # Check if the error was caused by missing permissions error.
+        await ctx.channel.send("{} you are missing the required permissions to use this command!".format(ctx.message.author.mention))
     else:
         await ctx.channel.send(f"Error! {error}")
 
 
 @BOT.command(name='unban',
-             description="UnBans the tagged user and supplies a reason",
+             description="Unbans the tagged user and supplies a reason",
              pass_context=True
              )
-@has_permissions(administrator=True)
-async def unban(ctx, member:discord.User):
+@commands.has_permissions(ban_members=True)
+async def unban(ctx, member:discord.User, *, reason:str):
     if member not in ctx.guild.members:
-        await ctx.channel.send(f"Unbanned the user {member.mention}")
         await ctx.guild.unban(member)
+        await ctx.channel.send(f"Unbanned the user {member.mention} with reason: \"{reason}\""")
     else:
         await ctx.channel.send("User is not banned!")
-@ban.error
+@unban.error
 async def unban_error(ctx, error):
-    if isinstance(error, CheckFailure): # Check if the error was caused by missing permissions error.
-        await ctx.channel.send("{} Only Administrators can use this command!".format(ctx.message.author.mention))
+    if isinstance(error, commands.CheckFailure): # Check if the error was caused by missing permissions error.
+        await ctx.channel.send("{} you are missing the required permissions to use this command!".format(ctx.message.author.mention))
     else:
         await ctx.channel.send(f"Error! {error}")
 
@@ -211,23 +211,22 @@ async def unban_error(ctx, error):
              brief="Chat cleaner.",
              pass_context=True
              )
-@has_permissions(administrator=True)
-async def clean(ctx, count:int=100):
+@commands.has_permissions(administrator=True)
+async def clean(ctx, member:discord.Member, count:int=100):
     if count < 1:
         await ctx.channel.send("Zero or Negative amount of messages to delete was given!")
         return
     if len(ctx.message.mentions) != 1:
         await ctx.channel.send("Can only delete 1 user's messages at a time!")
         return
-    
-    user = ctx.message.mentions[0]
+
     iterator = ctx.channel.history()
     counter = 0
     msg_list = []
     while counter < count:
         try:
             msg = await iterator.next()
-            if msg.author == user:
+            if msg.author == member:
                 msg_list.append(msg)
                 counter += 1
         except:
