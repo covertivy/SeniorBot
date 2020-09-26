@@ -174,25 +174,22 @@ async def help(ctx):
              pass_context=True
              )
 @has_permissions(administrator=True)
-async def clean(ctx, user:discord.User, count:int=100):
+async def clean(ctx, count:int=100):
     if count < 1:
         await ctx.channel.send("Zero or Negative amount of messages to delete was given!")
         return
-    user_obj = None
     if len(ctx.message.mentions) != 1:
         await ctx.channel.send("Can only delete 1 user's messages at a time!")
         return
-    else:
-        if (user_obj := await BOT.fetch_user(user.id)) == None:
-            await ctx.channel.send("Invalid user passed!")
-            return
+    
+    user = ctx.message.mentions[0]
     iterator = ctx.channel.history()
     counter = 0
     msg_list = []
     while counter < count:
         try:
             msg = await iterator.next()
-            if msg.author == user_obj:
+            if msg.author == user:
                 msg_list.append(msg)
                 counter += 1
         except:
@@ -209,7 +206,6 @@ async def clean(ctx, user:discord.User, count:int=100):
         print("Deleted {} messages from channel {}".format(counter, ctx.channel.name))
     except:
         return
-
 @clean.error
 async def clean_error(ctx, error):
     if isinstance(error, CheckFailure): # Check if the error was caused by missing permissions error.
@@ -356,7 +352,7 @@ async def Weather(ctx, coords:str):
 @BOT.command(
     name="looking_to_play",
     aliases=["ltp", "play_with_me", "pwm"],
-    description="Tags everyone and dm's them asking to play",
+    description="Tags all your friends and dm's them asking to play",
     brief="""
     ~looking_to_play <game_name>\n tags @everyone and also dm's your friends.
     """
@@ -371,6 +367,8 @@ async def looking_to_play(ctx, game: str):
     """
     f = open(FRIEND_LIST_PATH, "r")
     data = json.loads(f.read()) # get the user friend data.
+    f.close()
+    
     if str(ctx.author.id) not in data:
         await ctx.channel.send("Too bad! seems you are lonely as fuck and do not have any friends!")
     else:
@@ -379,18 +377,16 @@ async def looking_to_play(ctx, game: str):
         list_of_mentions = list()
         for friend_id in friends: 
             for user in all_usr_list:
-                if friend_id == user.id:
-                    friend_obj = await BOT.fetch_user(friend_id)
+                if friend_id == str(user.id):
+                    friend_obj = await BOT.fetch_user(int(friend_id))
                     list_of_mentions.append(friend_obj.mention)
 
                     if not friend_obj.dm_channel:
-                        friend_obj.create_dm
+                        await friend_obj.create_dm()
                     
                     await friend_obj.send("Hi {}, {} wants to play {} with you!".format(friend_obj.mention, ctx.author.name, game))
 
-        await ctx.channel.send("{} \n{} is in need of your assistace! join him in his mighty {} game!".format(str(list_of_mentions)[1:-1], ctx.author.mention, game))
-
-    f.close()
+        await ctx.channel.send("{} :\n{} is in need of your assistace! join him in his mighty {} game!".format(" ".join(list_of_mentions), ctx.author.mention, game))
 
 
 @BOT.command(
@@ -398,9 +394,10 @@ async def looking_to_play(ctx, game: str):
     description="Adds the tagged user to your list of friends, used with the 'looking to play' function",
     brief="""
     ~add_friend @Bob\n
-    """
+    """,
+    aliases=["add", "befriend"]
     )
-async def add_friend(ctx, user : discord.User):
+async def add_friend(ctx):
     """[summary]
     Adds a user to your friend list which is used in the looking_to_play function.
     Args:
@@ -410,25 +407,35 @@ async def add_friend(ctx, user : discord.User):
     Raises:
         Exception: if parameters are invalid.
     """
-    if len(ctx.message.mentions) == 1:
-        mentioned_user = user.id
-        read_obj = open(FRIEND_LIST_PATH, "r")
+    if len(ctx.message.mentions) > 0:
 
-        data = json.loads(read_obj.read())
-        if str(ctx.author.id) in data:
-            if mentioned_user not in data[str(ctx.author.id)]:
-                data[str(ctx.author.id)].append(mentioned_user)
-                await ctx.channel.send("Friend added successfully!")
-            else:
-                await ctx.channel.send("User already in your friend list!")
+        read_obj = open(FRIEND_LIST_PATH, "r")
+        json_data = json.loads(read_obj.read())
+        read_obj.close()
+
+        if str(ctx.author.id) in json_data:
+            for mention in ctx.message.mentions:
+                if mention == ctx.message.author:
+                    await ctx.send("You cannot add yourself as a friend! Go find some real ones...")
+                else:
+                    if str(mention.id) not in json_data[str(ctx.author.id)]:
+                        json_data[str(ctx.author.id)].append(str(mention.id))
+                        await ctx.channel.send(f"{mention.mention} added successfully!")
+                    else:
+                        await ctx.channel.send(f"{mention.mention} already in your friend list!")
         else:
             friend_list = list()
-            friend_list.append(mentioned_user)
-            data.update({str(ctx.author.id):friend_list})
+            for mention in ctx.message.mentions:
+                if mention == ctx.message.author:
+                    await ctx.send("You cannot add yourself as a friend! Go find some real ones...")
+                else:
+                    friend_list.append(str(mention.id))
+                    await ctx.channel.send(f"{mention.mention} added successfully!")
+            
+            json_data.update({str(ctx.author.id):friend_list})
 
         write_obj = open(FRIEND_LIST_PATH, "w")
-        write_obj.write(json.dumps(data))
-        read_obj.close()
+        write_obj.write(json.dumps(json_data))
         write_obj.close()
     else:
         await ctx.channel.send("Parameters invalid! check out {}help".format(BOT_DATA.BOT_PREFIX))
@@ -440,34 +447,38 @@ async def add_friend(ctx, user : discord.User):
     description="removes an existing friend from your friend list.",
     brief="~rmf @Bob\n"
 )
-async def remove_friend(ctx, user : discord.User):
+async def remove_friend(ctx):
     """[summary]
     Removes a friend from your friend list.
     Args:
         ctx ([type]): the message context object.
         user (discord.User): the mention of the user you want to remove.
     """
-    if len(ctx.message.mentions) == 1:
-        mentioned_user = user.id
+    if len(ctx.message.mentions) > 0:
+        
         read_obj = open(FRIEND_LIST_PATH, "r")
-
         data = json.loads(read_obj.read())
+        read_obj.close()
+        
         if str(ctx.author.id) in data:
-            if user.id not in data[str(ctx.author.id)]:
-                await ctx.channel.send("User not in your friend list!")
-            else:
-                data[str(ctx.author.id)].remove(mentioned_user)
-                await ctx.channel.send("Friend removed successfully!")
+            for mention in ctx.message.mentions:
+                if mention == ctx.message.author:
+                    await ctx.send("Do you really hate yourself that much that you wish to unfriend yourself? pathetic.")
+                else:
+                    if str(mention.id) not in data[str(ctx.author.id)]:
+                        await ctx.channel.send(f"{mention.mention} not in your friend list!")
+                    else:
+                        data[str(ctx.author.id)].remove(str(mention.id))
+                        await ctx.channel.send(f"{mention.mention} removed successfully!")
         else:
             await ctx.channel.send("Too bad! seems you are lonely as fuck and do not have any friends!")
 
         write_obj = open(FRIEND_LIST_PATH, "w")
         write_obj.write(json.dumps(data))
+        write_obj.close()
+
     else:
         await ctx.channel.send("invalid parameters! check out {}help!".format(BOT_DATA.BOT_PREFIX))
-    
-    read_obj.close()
-    write_obj.close()
 
 
 @BOT.command(
@@ -484,14 +495,16 @@ async def my_friends(ctx):
     """
     read_obj = open(FRIEND_LIST_PATH, "r")
     data = json.loads(read_obj.read())
+    read_obj.close()
+
     if (str(ctx.author.id) in data):
         if len(data[str(ctx.author.id)]) == 0:
             await ctx.channel.send("Too bad! seems you are lonely as fuck and do not have any friends!")
         else:
             embed = discord.Embed(color=discord.Color.dark_teal())
             embed.set_author(name="These are your current friends:")
-            for friend in data[str(ctx.author.id)]:
-                friend_obj = await BOT.fetch_user(friend)
+            for friend_id in data[str(ctx.author.id)]:
+                friend_obj = await BOT.fetch_user(friend_id)
                 embed.add_field(name="--------------------", value="\t🔳" + friend_obj.mention, inline=False)
             await ctx.channel.send(ctx.author.mention, embed=embed)
     else:
