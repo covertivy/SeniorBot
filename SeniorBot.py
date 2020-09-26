@@ -416,14 +416,14 @@ async def add_friend(ctx, user : discord.User):
 
         data = json.loads(read_obj.read())
         if str(ctx.author.id) in data:
-            if user.id not in data[str(ctx.author.id)]:
-                data[str(ctx.author.id)].append(user.id)
+            if mentioned_user not in data[str(ctx.author.id)]:
+                data[str(ctx.author.id)].append(mentioned_user)
                 await ctx.channel.send("Friend added successfully!")
             else:
                 await ctx.channel.send("User already in your friend list!")
         else:
             friend_list = list()
-            friend_list.append(user.id)
+            friend_list.append(mentioned_user)
             data.update({str(ctx.author.id):friend_list})
 
         write_obj = open(FRIEND_LIST_PATH, "w")
