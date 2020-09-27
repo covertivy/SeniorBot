@@ -75,7 +75,7 @@ BOT_DATA = BotData() # Our bot data object.
 BOT_DATA.read_config_data(CONFIG_FILE_PATH)
 BOT_DATA.read_json(FRIEND_LIST_PATH)
 BOT = Bot(command_prefix=BOT_DATA.BOT_PREFIX, description="Bot by Raz Kissos, helper and useful functions.") # Create the discord bot.
-BOT.remove_command('help') # Remove default help command (we will replace it).
+BOT.remove_command('help')
 
 
 @BOT.event
@@ -195,7 +195,7 @@ async def ban_error(ctx, error):
 async def unban(ctx, member:discord.User, *, reason:str):
     if member not in ctx.guild.members:
         await ctx.guild.unban(member)
-        await ctx.channel.send(f"Unbanned the user {member.mention} with reason: \"{reason}\""")
+        await ctx.channel.send(f"Unbanned the user {member.mention} with reason: \"{reason}\"")
     else:
         await ctx.channel.send("User is not banned!")
 @unban.error
@@ -219,7 +219,7 @@ async def clean(ctx, member:discord.Member, count:int=100):
     if len(ctx.message.mentions) != 1:
         await ctx.channel.send("Can only delete 1 user's messages at a time!")
         return
-
+    
     iterator = ctx.channel.history()
     counter = 0
     msg_list = []
@@ -231,15 +231,13 @@ async def clean(ctx, member:discord.Member, count:int=100):
                 counter += 1
         except:
             try:
-                for msg in msg_list:
-                    await msg.delete()
+                await ctx.channel.delete_messages(msg_list)
                 print("Deleted {} messages from channel {}".format(counter, ctx.channel.name))
                 return
             except:
                 return
     try:
-        for msg in msg_list:
-            await msg.delete()
+        await ctx.channel.delete_messages(msg_list)
         print("Deleted {} messages from channel {}".format(counter, ctx.channel.name))
     except:
         return
