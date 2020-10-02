@@ -23,57 +23,30 @@ import requests
 import random
 import os
 
+# Get Bot Data initialization class.
+if os.path.exists('BotData.py'):
+    import BotData 
+else:
+    raise Exception("BotData.py Does not exist!")
+
+
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__)) # Get relative path to our folder.
 FRIEND_LIST_PATH = os.path.join(THIS_FOLDER, 'userfriends.json') # Create path of friendlist json. (name can be changed)
 CONFIG_FILE_PATH = os.path.join(THIS_FOLDER, "botconfig.cfg") # Create path of config file. (name can be changed)
 DATETIME_OBJ = datetime.datetime
 
+BOT_DATA = BotData.BotData() # Our bot data object.
 
-class BotData:
-    BOT_NAME = str()
-    TOKEN = str()
-    BOT_PREFIX = str()
-    STATUS = Status.online
+# Read\Create essential files
+try:
+    BOT_DATA.read_config_data(CONFIG_FILE_PATH)
+    BOT_DATA.read_json(FRIEND_LIST_PATH) # Should not raise any exceptions but here just in case.
+except Exception as e:
+    print(f'{e}')
+finally:
+    exit()
 
-    def read_config_data(self, path: str):
-        """[summary]
-        Reads the bot config info from the config file and stores it in the BotData class.
-        Args:
-            path (str): path to config file
-        """
-        cfg_parser = configparser.ConfigParser()
-        cfg_parser.read(path)
-        self.BOT_PREFIX = cfg_parser['data']['prefix']
-        self.TOKEN = cfg_parser['data']['token']
-    
-    def read_json(self, path:str):
-        """[summary]
-        Makes sure the friend list json file exists, if it doesn't exist the program will creat it itself.
-        Args:
-            path (str): path to friend list json file.
-        """
-        if not os.path.exists(path):
-            creator = open(path, 'w+')
-            creator.close()
-        
-        f = open(path, 'r') 
-        f_str = f.read()
-        if len(f_str) >= 2:
-            if "{" != f_str[0] or "}" != f_str[-1]:
-                writer = open(path, 'w')
-                writer.write("{}")
-                writer.close()
-        else:
-            writer = open(path, 'w')
-            writer.write("{}")
-            writer.close()
-
-        f.close()
-
-
-BOT_DATA = BotData() # Our bot data object.
-BOT_DATA.read_config_data(CONFIG_FILE_PATH)
-BOT_DATA.read_json(FRIEND_LIST_PATH)
+# Create and Initialize Bot object.
 BOT = Bot(command_prefix=BOT_DATA.BOT_PREFIX, description="Bot by Raz Kissos, helper and useful functions.") # Create the discord bot.
 BOT.remove_command('help')
 
