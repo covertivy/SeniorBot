@@ -43,8 +43,8 @@ try:
     BOT_DATA.read_json(FRIEND_LIST_PATH) # Should not raise any exceptions but here just in case.
 except Exception as e:
     print(f'{e}')
-finally:
     exit()
+    
 
 # Create and Initialize Bot object.
 BOT = Bot(command_prefix=BOT_DATA.BOT_PREFIX, description="Bot by Raz Kissos, helper and useful functions.") # Create the discord bot.
@@ -75,7 +75,7 @@ async def list_servers():
     await BOT.wait_until_ready()
     while not BOT.is_closed():
         print_guilds()
-        print("{}\nBot by Raz Kissos, helper and useful functions.\nRunning bot {}\nFriend list json file path: {}\n********************\n".format(DATETIME_OBJ.today(), BOT_DATA.BOT_NAME, FRIEND_LIST_PATH))
+        print("{}\nBot by Raz Kissos, helper and useful functions.\nFriend list json file path: {}\n********************\n".format(DATETIME_OBJ.today(), FRIEND_LIST_PATH))
         await asyncio.sleep(3600)
 
 @BOT.event
