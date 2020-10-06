@@ -183,7 +183,8 @@ async def clean(ctx, user:discord.User, count:int=100):
         await ctx.channel.send("Can only delete 1 user's messages at a time!")
         return
     else:
-        if (user_obj := await BOT.fetch_user(user.id)) == None:
+        user_obj = await BOT.fetch_user(user.id)
+        if user_obj == None:
             await ctx.channel.send("Invalid user passed!")
             return
     iterator = ctx.channel.history()
