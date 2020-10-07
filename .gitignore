@@ -538,3 +538,4 @@ MigrationBackup/
 .vscode/settings.json
 .vscode/launch.json
 .vscode
+botconfig.cfg
