@@ -220,6 +220,33 @@ async def clean_error(ctx, error):
         await ctx.channel.send("{} Only Administrators can use this command!".format(ctx.message.author.mention))
 
 
+@BOT.command(name="userinfo",
+            description="Prints out the user's information in a nice embed",
+            brief="{}whois @<tagged_member> | {}whois\n if no user is specified the selected user will be the sender".format(BOT_DATA.BOT_PREFIX,BOT_DATA.BOT_PREFIX),
+            aliases=["whois"])
+async def userinfo(ctx, member: discord.Member = None):
+    if not member: 
+        member = ctx.message.author
+    embed = discord.Embed(colour=discord.Colour(random.randint(1, 16777215)), timestamp=ctx.message.created_at,title=f"User Info - {member}")
+    embed.set_thumbnail(url=member.avatar_url)
+    embed.add_field(name="Name", value=member.name)
+    embed.add_field(name="ID:", value=member.id)
+    embed.add_field(name="Nickname:", value=member.display_name)
+    embed.add_field(name="Status", value=member.status)
+    embed.add_field(name="Created Account On:", value=member.created_at.strftime("%a, %#d %B %Y, %I:%M  UTC"))
+    embed.add_field(name="Joined Server On:", value=(member.joined_at.strftime("%a, %#d %B %Y, %I:%M %p UTC")))
+    
+    roles = [role.mention for role in member.roles[1:]]
+
+    if len(member.roles[1:]) < 1:
+        embed.add_field(name=f"Roles:",value="None", inline=False)
+        embed.add_field(name="Highest Role:", value="None")
+    elif roles != None:
+        embed.add_field(name=f"Roles({len(roles)}):",value=",".join(roles), inline=False)
+        embed.add_field(name="Highest Role:", value=member.top_role.mention)
+    
+    await ctx.send(embed=embed)
+
 ###########################################################################################################################################################################
 #################################################################| Fun and Useful Commands |###############################################################################
 ###########################################################################################################################################################################
