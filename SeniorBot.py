@@ -220,6 +220,19 @@ async def clean_error(ctx, error):
         await ctx.channel.send("{} Only Administrators can use this command!".format(ctx.message.author.mention))
 
 
+@BOT.command(name='serverinfo', aliases=['info'], description="Shows the server information")
+async def information(ctx):
+    guild = ctx.guild
+    embed_ret = discord.Embed(colour=discord.Color.gold())
+    embed_ret.set_thumbnail(url=guild.icon_url)
+    embed_ret.set_footer(text='Server Information')
+    embed_ret.add_field(name='Server Name', value=guild.name)
+    embed_ret.add_field(name='🧍Memeber Count🧍', value=str(guild.member_count), inline=False)
+    invite_url = await ctx.channel.create_invite(max_age=3600, max_uses=3, unique=False)
+    embed_ret.add_field(name='🔗Invite Link🔗', value=invite_url, inline=False)
+    await ctx.channel.send(embed=embed_ret)
+
+
 @BOT.command(name="userinfo",
             description="Prints out the user's information in a nice embed",
             brief="{}whois @<tagged_member> | {}whois\n if no user is specified the selected user will be the sender".format(BOT_DATA.BOT_PREFIX,BOT_DATA.BOT_PREFIX),
