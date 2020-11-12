@@ -9,7 +9,7 @@ SeniorBot.exe: ${NECESSARY_FILES}
 	make clean
 
 pip: requirements.txt
-	pip install $^
+	pip3 install -r $^
 
 clean:
 	rm -rf ./build/ ./dist/ SeniorBot.spec
