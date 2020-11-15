@@ -8,5 +8,8 @@ SeniorBot.exe: ${NECESSARY_FILES}
 	mv ./dist/SeniorBot.exe ./SeniorBot.exe
 	make clean
 
+pip: requirements.txt
+	pip install $^
+
 clean:
 	rm -rf ./build/ ./dist/ SeniorBot.spec
