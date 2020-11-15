@@ -105,7 +105,7 @@ async def help(ctx):
         ctx ([type]): the message context object.
     """
     author = ctx.message.author
-    embed = discord.Embed(color=discord.Color.dark_teal())
+    embed = discord.Embed(color=discord.Color.gold())
     embed.set_thumbnail(url=BOT.user.avatar_url)
     embed.set_footer(text="Senior Bot's Commands")
     for cmd in BOT.commands:
