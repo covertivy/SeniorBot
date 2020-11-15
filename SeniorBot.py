@@ -106,10 +106,11 @@ async def help(ctx):
     """
     author = ctx.message.author
     embed = discord.Embed(color=discord.Color.dark_teal())
-    embed.set_author(name="Senior Bot's Commands:")
+    embed.set_thumbnail(url=BOT.user.avatar_url)
+    embed.set_footer(text="Senior Bot's Commands")
     for cmd in BOT.commands:
         embed.add_field(name= str("♿|~**" + cmd.name + "**: "), value=str(cmd.description + "\n👀|Aliases: " + str(cmd.aliases)), inline=False)
-    await ctx.send(author.mention, embed=embed)
+    await ctx.send(embed=embed)
 
 
 @BOT.command(name='ban',
