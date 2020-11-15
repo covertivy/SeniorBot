@@ -21,27 +21,3 @@ class BotData:
             raise Exception("config file path does not exist!")
         self.BOT_PREFIX = cfg_parser['data']['prefix']
         self.TOKEN = cfg_parser['data']['token']
-    
-    def read_json(self, path:str):
-        """[summary]
-        Makes sure the friend list json file exists, if it doesn't exist the program will creat it itself.
-        Args:
-            path (str): path to friend list json file.
-        """
-        if not os.path.exists(path):
-            creator = open(path, 'w+')
-            creator.close()
-        
-        f = open(path, 'r') 
-        f_str = f.read()
-        if len(f_str) >= 2:
-            if "{" != f_str[0] or "}" != f_str[-1]:
-                writer = open(path, 'w')
-                writer.write("{}")
-                writer.close()
-        else:
-            writer = open(path, 'w')
-            writer.write("{}")
-            writer.close()
-
-        f.close()
