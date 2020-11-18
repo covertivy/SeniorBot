@@ -201,7 +201,7 @@ async def kick_error(ctx, error):
         error, commands.CheckFailure
     ):  # Check if the error was caused by missing permissions error.
         await ctx.channel.send(
-            "{} you are missing the required permissions to use this command!".format(
+            "{} you are missing the required permissions to use this command!\nplease use '~help kick' to see more information.".format(
                 ctx.message.author.mention
             )
         )
@@ -233,7 +233,7 @@ async def ban_error(ctx, error):
         error, commands.CheckFailure
     ):  # Check if the error was caused by missing permissions error.
         await ctx.channel.send(
-            "{} you are missing the required permissions to use this command!".format(
+            "{} you are missing the required permissions to use this command!\nplease use '~help ban' to see more information.".format(
                 ctx.message.author.mention
             )
         )
@@ -243,7 +243,9 @@ async def ban_error(ctx, error):
 
 @BOT.command(
     name="unban",
-    description="Unbans the tagged user and supplies a reason",
+    brief="Unbans the mentioned user from the server.",
+    description="Unbans the mentioned user from the server.\n**Important** - user must have the ***ban members*** permission.",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}unban @<user mention>** -> unbans the mentioned user from the server (user has to be banned).",
     pass_context=True,
 )
 @commands.has_permissions(ban_members=True)
@@ -263,7 +265,7 @@ async def unban_error(ctx, error):
         error, commands.CheckFailure
     ):  # Check if the error was caused by missing permissions error.
         await ctx.channel.send(
-            "{} you are missing the required permissions to use this command!".format(
+            "{} you are missing the required permissions to use this command!\nplease use '~help unban' to see more information.".format(
                 ctx.message.author.mention
             )
         )
@@ -273,8 +275,9 @@ async def unban_error(ctx, error):
 
 @BOT.command(
     name="clean",
-    description="Cleans a given amount of messages sent by the tagged user (If message amount is not specified automatically selects 100)",
-    brief="Chat cleaner.",
+    brief="Cleans a given number of a user's messages from the text channel.",
+    description="Cleans the given amount of messages that were sent by the mentioned member (If message amount is not specified automatically selects 100).\n**Important** - user must have the ***administrator*** permission.",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}clean @<user mention> <message amount>** -> deletes the given amount of messages the mentioned member has has sent in the current text channel (message amount is optional, default will be 100).",
     pass_context=True,
 )
 @commands.has_permissions(administrator=True)
@@ -321,14 +324,17 @@ async def clean_error(ctx, error):
         error, CheckFailure
     ):  # Check if the error was caused by missing permissions error.
         await ctx.channel.send(
-            "{} Only Administrators can use this command!".format(
+            "{} you are missing the required permissions to use this command!\nplease use '~help clean' to see more information.".format(
                 ctx.message.author.mention
             )
-        )
 
 
 @BOT.command(
-    name="serverinfo", aliases=["info"], description="Shows the server information"
+    name="serverinfo",
+    aliases=["info"],
+    brief='Shows server information.',
+    description="Shows the all the server information (icon, memeber count, etc...).",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}serverinfo** -> will print an embed with the general server information."
 )
 async def information(ctx):
     guild = ctx.guild
@@ -346,11 +352,10 @@ async def information(ctx):
 
 @BOT.command(
     name="userinfo",
-    description="Prints out the user's information in a nice embed",
-    brief="{}whois @<tagged_member> | {}whois\n if no user is specified the selected user will be the sender".format(
-        BOT_DATA.BOT_PREFIX, BOT_DATA.BOT_PREFIX
-    ),
     aliases=["whois"],
+    brief="Shows the mentioned member information."
+    description="Sends an embed containing the mentioned member's information (icon, name, roles, nickname, id, etc...).\nIf no member was mentioned the command will show the info of the author.",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}userinfo @<mentioned_member>** -> will show the mentioned member's general information.\n| **{BOT_DATA.BOT_PREFIX}userinfo** -> will show the author's general information."
 )
 async def userinfo(ctx, member: discord.Member = None):
     if not member:
@@ -393,9 +398,10 @@ async def userinfo(ctx, member: discord.Member = None):
 ###########################################################################################################################################################################
 @BOT.command(
     name="coinflip",
-    description="Returns heads/tails.",
-    brief="Excessicve coin flipper",
     aliases=["flip", "coin"],
+    brief="Returns heads/tails.",
+    description="This command simulates a coinflip by choosing randomly heads or tails.",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}coinflip** -> will print out a random response which would be either 'heads' or 'tails'."
 )
 async def coinflip(ctx):
     await ctx.send(
@@ -406,10 +412,9 @@ async def coinflip(ctx):
 @BOT.command(
     name="RandInt",
     aliases=["RandI", "RInt", "RI"],
-    description="Returns a random integer in a given range.",
-    brief="""
-    ~RandInt (<num1>,<num2>).\n For example ~RandInt <bottom limit> <top limit>.
-    """,
+    brief="Returns a random integer in a given range.",
+    description="Returns a random integer in a given range. The range is only from (bottom limit) up to (top limit - 1).",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}RandInt <bottom limit> <top limit>** -> will return a random number between bottom limit and top limit (top limit not in range).",
 )  # return a random integer between the numbers given.
 async def RandInt(ctx, bottom: int, top: int):
     """[summary]
