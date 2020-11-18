@@ -151,7 +151,9 @@ async def help(ctx, command: str = None):
             if len(cmd_to_print.aliases) == 0:
                 aliases_str = "None"
             else:
-                aliases_str = ", ".join(cmd_to_print.aliases)
+                aliases_str = ", ".join(
+                    [f'"{alias}"' for alias in cmd_to_print.aliases]
+                )
 
             embed = discord.Embed(color=discord.Color.dark_orange())
             embed.set_footer(text=f'"{command}" thorough description')
