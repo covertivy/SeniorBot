@@ -171,7 +171,9 @@ async def help(ctx, command: str = None):
 
 @BOT.command(
     name="kick",
-    description="Kicks the tagged user and supplies a reason",
+    brief="Kicks the mentioned member with a reason.",
+    description="Kicks the mentioned member and sends the reason given by the admin.\n**Important** - user must have the ***kick members*** permission.",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}kick @<member mention> <reason>** -> kicks the mentioned member and sends the reason to him (reason does not have to be in quotes).",
     pass_context=True,
 )
 @commands.has_permissions(kick_members=True)
@@ -201,7 +203,9 @@ async def kick_error(ctx, error):
 
 @BOT.command(
     name="ban",
-    description="Bans the tagged user and supplies a reason",
+    brief="Bans the mentioned member with a reason.",
+    description="Bans the mentioned member and sends the reason given by the admin.\n**Important** - user must have the ***ban members*** permission.",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}ban @<member mention> <reason>** -> bans the mentioned member and sends the reason to him (reason does not have to be in quotes).",
     pass_context=True,
 )
 @commands.has_permissions(ban_members=True)
