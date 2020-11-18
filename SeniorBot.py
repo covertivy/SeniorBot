@@ -147,6 +147,12 @@ async def help(ctx, command: str = None):
                     break
                 elif cmd.name == command:
                     cmd_to_print = cmd
+
+            if len(cmd_to_print.aliases) == 0:
+                aliases_str = "None"
+            else:
+                aliases_str = ", ".join(cmd_to_print.aliases)
+
             embed = discord.Embed(color=discord.Color.dark_orange())
             embed.set_footer(text=f'"{command}" thorough description')
             embed.add_field(
@@ -162,7 +168,7 @@ async def help(ctx, command: str = None):
                 name="⚙ Command Usage ⚙", value=cmd_to_print.usage, inline=False
             )
             embed.add_field(
-                name="🎭 Name Aliases 🎭", value=cmd_to_print.aliases, inline=False
+                name="🎭 Command Name Aliases 🎭", value=aliases_str, inline=False
             )
             await ctx.channel.send(embed=embed)
         else:
