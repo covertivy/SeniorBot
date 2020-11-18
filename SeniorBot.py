@@ -113,24 +113,60 @@ asyncio.ensure_future(
 ###########################################################################################################################################################################
 ###############################################################| Server Dedicated Commands |###############################################################################
 ###########################################################################################################################################################################
-@BOT.command(name="help", aliases=["h"], description="Shows this help message.")
-async def help(ctx):
+@BOT.command(
+    name="help",
+    aliases=["h"],
+    brief="Shows the help message.\nAlso can be used as a single command help message.",
+    description="When sent with no arguments, the command simply prints out all the command names and their brief explanations. But when sending a command name as an argument the command will print out a full list of the command's fields.",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}help** -> print out the full list of commands.\n| **{BOT_DATA.BOT_PREFIX}help <command name>** - > print out thorough description of the command with the matching name",
+)
+async def help(ctx, command: str = None):
     """[summary]
     this function replaces the default help command from discord and sends a prettier and formatted help message.
     Args:
         ctx ([type]): the message context object.
     """
-    author = ctx.message.author
-    embed = discord.Embed(color=discord.Color.gold())
-    embed.set_thumbnail(url=BOT.user.avatar_url)
-    embed.set_footer(text="Senior Bot's Commands")
-    for cmd in BOT.commands:
-        embed.add_field(
-            name=str("♿|~**" + cmd.name + "**: "),
-            value=str(cmd.description + "\n👀|Aliases: " + str(cmd.aliases)),
-            inline=False,
-        )
-    await ctx.send(embed=embed)
+    if command is None:
+        author = ctx.message.author
+        embed = discord.Embed(color=discord.Color.gold())
+        embed.set_thumbnail(url=BOT.user.avatar_url)
+        embed.set_footer(text="Senior Bot's Commands")
+
+        for cmd in BOT.commands:
+            embed.add_field(
+                name=str(f"♿|**{BOT_DATA.BOT_PREFIX}{cmd.name}**: "),
+                value=str(f"❓ {cmd.brief}"),
+                inline=False,
+            )
+        await ctx.send(embed=embed)
+    else:
+        if command in [command.name for command in BOT.commands]:
+            cmd_to_print = None
+            for cmd in BOT.commands:
+                if cmd_to_print is not None:
+                    break
+                elif cmd.name == command:
+                    cmd_to_print = cmd
+            embed = discord.Embed(color=discord.Color.dark_orange())
+            embed.set_footer(text=f'"{command}" thorough description')
+            embed.add_field(
+                name="💬 Command Name 💬", value=cmd_to_print.name, inline=False
+            )
+            embed.add_field(
+                name="📰 Description 📰", value=cmd_to_print.description, inline=False
+            )
+            embed.add_field(
+                name="❓ Brief Explanation ❓", value=cmd_to_print.brief, inline=False
+            )
+            embed.add_field(
+                name="⚙ Command Usage ⚙", value=cmd_to_print.usage, inline=False
+            )
+            embed.add_field(
+                name="🎭 Name Aliases 🎭", value=cmd_to_print.aliases, inline=False
+            )
+            await ctx.channel.send(embed=embed)
+        else:
+            await ctx.channel.send(f"No command named {command} was found!")
 
 
 @BOT.command(
