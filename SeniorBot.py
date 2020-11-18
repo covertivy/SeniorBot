@@ -162,10 +162,10 @@ async def help(ctx, command_name: str = None):
                 name="💬 Command Name 💬", value=cmd_to_print.name, inline=False
             )
             embed.add_field(
-                name="📰 Description 📰", value=cmd_to_print.description, inline=False
+                name="❓ Brief Explanation ❓", value=cmd_to_print.brief, inline=False
             )
             embed.add_field(
-                name="❓ Brief Explanation ❓", value=cmd_to_print.brief, inline=False
+                name="📰 Description 📰", value=cmd_to_print.description, inline=False
             )
             embed.add_field(
                 name="⚙ Command Usage ⚙", value=cmd_to_print.usage, inline=False
