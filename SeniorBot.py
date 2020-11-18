@@ -10,7 +10,7 @@
 #                    GitHub page: https://github.com/RazKissos/SeniorBot                  #
 ###########################################################################################
 
-from discord.ext.commands import Bot, CheckFailure, CommandError
+from discord.ext.commands import *
 from discord import Game, activity, Status
 from discord.ext import commands
 import configparser
@@ -179,6 +179,74 @@ async def help(ctx, command_name: str = None):
 
 
 @BOT.command(
+    name="mute",
+    brief="Mutes the mentioned member.",
+    description="Mutes the mentioned member by giving him a role named 'muted'.\n**Important** - user must have the ***manage roles*** permission.",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}mute @<member mention>** -> will assign the 'muted' role to the mentioned member.",
+    pass_context=True,
+)
+@commands.has_permissions(manage_roles=True)
+async def mute(ctx, member: discord.Member):
+    guild_member = await ctx.guild.fetch_member(member.id)
+    if member == guild_member:
+        await member.edit(mute=True)
+        embed = discord.Embed(
+            title="User Muted!",
+            description=f"**{member}** was muted by **{ctx.message.author}**!",
+            color=discord.Color.red(),
+        )
+        await ctx.channel.send(embed=embed)
+    else:
+        await ctx.channel.send(f"Member {member.mention} is not in the server!")
+
+
+@mute.error
+async def mute_error(ctx, error):
+    if isinstance(
+        error, MissingPermissions
+    ):  # Check if the error was caused by missing permissions error.
+        await ctx.channel.send(
+            f"{ctx.message.author.mention} you are missing the required permissions to use this command!\nplease use '{BOT_DATA.BOT_PREFIX}help mute' to see more information."
+        )
+    else:
+        await ctx.channel.send(f"Error! {error}")
+
+
+@BOT.command(
+    name="unmute",
+    brief="Unmutes the mentioned member.",
+    description="Unmutes the mentioned member by removing his 'muted' role.\n**Important** - user must have the ***manage roles*** permission.",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}unmute @<member mention>** -> will unassign the 'muted' role from the mentioned member.",
+    pass_context=True,
+)
+@commands.has_permissions(manage_roles=True)
+async def unmute(ctx, member: discord.Member):
+    guild_member = await ctx.guild.fetch_member(member.id)
+    if member == guild_member:
+        await member.edit(mute=False)
+        embed = discord.Embed(
+            title="User Unmuted!",
+            description=f"**{member}** was unmuted by **{ctx.message.author}**!",
+            color=discord.Color.green(),
+        )
+        await ctx.send(embed=embed)
+    else:
+        await ctx.channel.send(f"Member {member.mention} is not in the server!")
+
+
+@unmute.error
+async def unmute_error(ctx, error):
+    if isinstance(
+        error, MissingPermissions
+    ):  # Check if the error was caused by missing permissions error.
+        await ctx.channel.send(
+            f"{ctx.message.author.mention} you are missing the required permissions to use this command!\nplease use '{BOT_DATA.BOT_PREFIX}help unmute' to see more information."
+        )
+    else:
+        await ctx.channel.send(f"Error! {error}")
+
+
+@BOT.command(
     name="kick",
     brief="Kicks the mentioned member with a reason.",
     description="Kicks the mentioned member and sends the reason given by the admin.\n**Important** - user must have the ***kick members*** permission.",
@@ -199,12 +267,10 @@ async def kick(ctx, member: discord.Member, *, reason: str):
 @kick.error
 async def kick_error(ctx, error):
     if isinstance(
-        error, commands.CheckFailure
+        error, MissingPermissions
     ):  # Check if the error was caused by missing permissions error.
         await ctx.channel.send(
-            "{} you are missing the required permissions to use this command!\nplease use '~help kick' to see more information.".format(
-                ctx.message.author.mention
-            )
+            f"{ctx.message.author.mention} you are missing the required permissions to use this command!\nplease use '{BOT_DATA.BOT_PREFIX}help kick' to see more information."
         )
     else:
         await ctx.channel.send(f"Error! {error}")
@@ -234,9 +300,7 @@ async def ban_error(ctx, error):
         error, commands.CheckFailure
     ):  # Check if the error was caused by missing permissions error.
         await ctx.channel.send(
-            "{} you are missing the required permissions to use this command!\nplease use '~help ban' to see more information.".format(
-                ctx.message.author.mention
-            )
+            f"{ctx.message.author.mention} you are missing the required permissions to use this command!\nplease use '{BOT_DATA.BOT_PREFIX}help ban' to see more information."
         )
     else:
         await ctx.channel.send(f"Error! {error}")
@@ -266,9 +330,7 @@ async def unban_error(ctx, error):
         error, commands.CheckFailure
     ):  # Check if the error was caused by missing permissions error.
         await ctx.channel.send(
-            "{} you are missing the required permissions to use this command!\nplease use '~help unban' to see more information.".format(
-                ctx.message.author.mention
-            )
+            f"{ctx.message.author.mention} you are missing the required permissions to use this command!\nplease use '{BOT_DATA.BOT_PREFIX}help unban' to see more information."
         )
     else:
         await ctx.channel.send(f"Error! {error}")
@@ -325,7 +387,7 @@ async def clean_error(ctx, error):
         error, CheckFailure
     ):  # Check if the error was caused by missing permissions error.
         await ctx.channel.send(
-            f"{ctx.message.author.mention} you are missing the required permissions to use this command!\nplease use '~help clean' to see more information."
+            f"{ctx.message.author.mention} you are missing the required permissions to use this command!\nplease use '{BOT_DATA.BOT_PREFIX}help clean' to see more information."
         )
 
 
