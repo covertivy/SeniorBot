@@ -113,6 +113,25 @@ async def help(ctx):
     await ctx.send(embed=embed)
 
 
+@BOT.command(name='kick',
+             description="Kicks the tagged user and supplies a reason",
+             pass_context=True
+             )
+@commands.has_permissions(kick_members=True)
+async def kick(ctx, member:discord.Member, *,reason:str):
+    if member in ctx.guild.members:
+        await member.kick(reason=reason)
+        await ctx.channel.send(f"Kicked the member {member.mention} for reason \"{reason}\"")
+    else:
+        await ctx.channel.send("User is not in the server")
+@kick.error
+async def kick_error(ctx, error):
+    if isinstance(error, commands.CheckFailure): # Check if the error was caused by missing permissions error.
+        await ctx.channel.send("{} you are missing the required permissions to use this command!".format(ctx.message.author.mention))
+    else:
+        await ctx.channel.send(f"Error! {error}")
+
+
 @BOT.command(name='ban',
              description="Bans the tagged user and supplies a reason",
              pass_context=True
@@ -121,7 +140,7 @@ async def help(ctx):
 async def ban(ctx, member:discord.Member, *,reason:str):
     if member in ctx.guild.members:
         await member.ban(reason=reason)
-        await ctx.channel.send(f"Banned the user {member.mention} for reason: \"{reason}\"")
+        await ctx.channel.send(f"Banned the member {member.mention} for reason: \"{reason}\"")
     else:
         await ctx.channel.send("User is not in the server!")
 @ban.error
