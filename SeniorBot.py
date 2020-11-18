@@ -58,7 +58,7 @@ BOT.remove_command("help")
 
 @BOT.event
 async def on_ready():
-    """[summary]
+    """
     this function sends a message in the console telling us the bot is up.
     it also configures the bot's status and sends the data to the servers.
     """
@@ -94,7 +94,7 @@ async def list_servers():
 
 @BOT.event
 async def on_command_error(ctx, error):
-    """[summary]
+    """
     Excepts every error the bot receivs and prints it to the console.
     Args:
         ctx ([type]): the message context object.
@@ -120,13 +120,14 @@ asyncio.ensure_future(
     description="When sent with no arguments, the command simply prints out all the command names and their brief explanations. But when sending a command name as an argument the command will print out a full list of the command's fields.",
     usage=f"| **{BOT_DATA.BOT_PREFIX}help** -> print out the full list of commands.\n| **{BOT_DATA.BOT_PREFIX}help <command name>** - > print out thorough description of the command with the matching name",
 )
-async def help(ctx, command: str = None):
-    """[summary]
+async def help(ctx, command_name: str = None):
+    """
     this function replaces the default help command from discord and sends a prettier and formatted help message.
     Args:
         ctx ([type]): the message context object.
+        command
     """
-    if command is None:
+    if command_name is None:
         author = ctx.message.author
         embed = discord.Embed(color=discord.Color.gold())
         embed.set_thumbnail(url=BOT.user.avatar_url)
@@ -140,12 +141,12 @@ async def help(ctx, command: str = None):
             )
         await ctx.send(embed=embed)
     else:
-        if command in [command.name for command in BOT.commands]:
+        if command_name in [command.name for command in BOT.commands]:
             cmd_to_print = None
             for cmd in BOT.commands:
                 if cmd_to_print is not None:
                     break
-                elif cmd.name == command:
+                elif cmd.name == command_name:
                     cmd_to_print = cmd
 
             if len(cmd_to_print.aliases) == 0:
@@ -156,7 +157,7 @@ async def help(ctx, command: str = None):
                 )
 
             embed = discord.Embed(color=discord.Color.dark_orange())
-            embed.set_footer(text=f'"{command}" thorough description')
+            embed.set_footer(text=f'"{cmd_to_print.name}" thorough description')
             embed.add_field(
                 name="💬 Command Name 💬", value=cmd_to_print.name, inline=False
             )
@@ -324,19 +325,18 @@ async def clean_error(ctx, error):
         error, CheckFailure
     ):  # Check if the error was caused by missing permissions error.
         await ctx.channel.send(
-            "{} you are missing the required permissions to use this command!\nplease use '~help clean' to see more information.".format(
-                ctx.message.author.mention
-            )
+            f"{ctx.message.author.mention} you are missing the required permissions to use this command!\nplease use '~help clean' to see more information."
+        )
 
 
 @BOT.command(
     name="serverinfo",
     aliases=["info"],
-    brief='Shows server information.',
+    brief="Shows server information.",
     description="Shows the all the server information (icon, memeber count, etc...).",
-    usage=f"| **{BOT_DATA.BOT_PREFIX}serverinfo** -> will print an embed with the general server information."
+    usage=f"| **{BOT_DATA.BOT_PREFIX}serverinfo** -> will print an embed with the general server information.",
 )
-async def information(ctx):
+async def serverinfo(ctx):
     guild = ctx.guild
     embed_ret = discord.Embed(colour=discord.Color.gold())
     embed_ret.set_thumbnail(url=guild.icon_url)
@@ -353,9 +353,9 @@ async def information(ctx):
 @BOT.command(
     name="userinfo",
     aliases=["whois"],
-    brief="Shows the mentioned member information."
+    brief="Shows the mentioned member information.",
     description="Sends an embed containing the mentioned member's information (icon, name, roles, nickname, id, etc...).\nIf no member was mentioned the command will show the info of the author.",
-    usage=f"| **{BOT_DATA.BOT_PREFIX}userinfo @<mentioned_member>** -> will show the mentioned member's general information.\n| **{BOT_DATA.BOT_PREFIX}userinfo** -> will show the author's general information."
+    usage=f"| **{BOT_DATA.BOT_PREFIX}userinfo @<mentioned_member>** -> will show the mentioned member's general information.\n| **{BOT_DATA.BOT_PREFIX}userinfo** -> will show the author's general information.",
 )
 async def userinfo(ctx, member: discord.Member = None):
     if not member:
@@ -401,7 +401,7 @@ async def userinfo(ctx, member: discord.Member = None):
     aliases=["flip", "coin"],
     brief="Returns heads/tails.",
     description="This command simulates a coinflip by choosing randomly heads or tails.",
-    usage=f"| **{BOT_DATA.BOT_PREFIX}coinflip** -> will print out a random response which would be either 'heads' or 'tails'."
+    usage=f"| **{BOT_DATA.BOT_PREFIX}coinflip** -> will print out a random response which would be either 'heads' or 'tails'.",
 )
 async def coinflip(ctx):
     await ctx.send(
@@ -413,17 +413,10 @@ async def coinflip(ctx):
     name="RandInt",
     aliases=["RandI", "RInt", "RI"],
     brief="Returns a random integer in a given range.",
-    description="Returns a random integer in a given range. The range is only from (bottom limit) up to (top limit - 1).",
-    usage=f"| **{BOT_DATA.BOT_PREFIX}RandInt <bottom limit> <top limit>** -> will return a random number between bottom limit and top limit (top limit not in range).",
-)  # return a random integer between the numbers given.
+    description="Returns a random integer in a given range. The range is between (bottom limit) up to (top limit).",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}RandInt <bottom limit> <top limit>** -> will return a random number between bottom limit and top limit (top limit is in range).",
+)
 async def RandInt(ctx, bottom: int, top: int):
-    """[summary]
-    Returns a random integer in a given range For example `~RandInt (10,20)`.
-    the first parameter is the bottom range and the second is the top range.
-    Args:
-        ctx ([type]): the message context object.
-        parameters (str): the range as a string for example (10,20).
-    """
     if bottom < top:
         try:
             await ctx.send(
