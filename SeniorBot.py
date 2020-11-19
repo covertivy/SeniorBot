@@ -181,11 +181,11 @@ async def help(ctx, command_name: str = None):
 @BOT.command(
     name="mute",
     brief="Mutes the mentioned member.",
-    description="Mutes the mentioned member by giving him a role named 'muted'.\n**Important** - user must have the ***manage roles*** permission.",
-    usage=f"| **{BOT_DATA.BOT_PREFIX}mute @<member mention>** -> will assign the 'muted' role to the mentioned member.",
+    description="Mutes the mentioned member by giving him a server mute.\n**Important** - user must have the ***administrator*** permission.",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}mute @<member mention>** -> will apply a server mute to the mentioned member.",
     pass_context=True,
 )
-@commands.has_permissions(manage_roles=True)
+@commands.has_permissions(administrator=True)
 async def mute(ctx, member: discord.Member):
     guild_member = await ctx.guild.fetch_member(member.id)
     if member == guild_member:
@@ -215,11 +215,11 @@ async def mute_error(ctx, error):
 @BOT.command(
     name="unmute",
     brief="Unmutes the mentioned member.",
-    description="Unmutes the mentioned member by removing his 'muted' role.\n**Important** - user must have the ***manage roles*** permission.",
-    usage=f"| **{BOT_DATA.BOT_PREFIX}unmute @<member mention>** -> will unassign the 'muted' role from the mentioned member.",
+    description="Unmutes the mentioned member by removing his server mute.\n**Important** - user must have the ***administrator*** permission.",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}unmute @<member mention>** -> will remove the server mute from the mentioned member.",
     pass_context=True,
 )
-@commands.has_permissions(manage_roles=True)
+@commands.has_permissions(administrator=True)
 async def unmute(ctx, member: discord.Member):
     guild_member = await ctx.guild.fetch_member(member.id)
     if member == guild_member:
