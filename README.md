@@ -7,7 +7,7 @@ I implemented some basic functions (bitcoin value, 8ball, etc...) and a 'friend 
 you can add and remove friends, invite them to play etc...
 The bot is usually offline so do not expect 24/7 usage.
 
-**You can add SeniorBot to your server via this link: https://discordapp.com/oauth2/authorize?client_id=710077618493587539&scope=bot&permissions=8**
+**You can add SeniorBot to your server via this link: https://discord.com/oauth2/authorize?client_id=710077618493587539&scope=bot&permissions=2147483647 if you do add it make sure to place his role at the top so he can manage things correctly with no errors.**
 
 **If you wish to use it all you need is to create a config file named `botconfig.cfg` and paste your bot info like this:**
 ```
