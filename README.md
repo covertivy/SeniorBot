@@ -1,12 +1,12 @@
 <p align="center">
   <a href="https://github.com/RazKissos/SeniorBot">
-    <img align="center" src="https://github-readme-stats.vercel.app/api/pin/?username=razkissos&repo=seniorbot&theme=dracula" />
+    <img src="https://cdn.discordapp.com/attachments/591367551892586635/809507213365608494/LogoWithBorder.png" alt="Logo" width="280" height="280">
   </a>
 </p>
 
 <p align="center">
   <a href="https://github.com/RazKissos/SeniorBot">
-    <img src="https://cdn.discordapp.com/attachments/591367551892586635/809495742414192670/Profile_Photo_Ubisoft.png" alt="Logo" width="280" height="280">
+    <img align="center" src="https://github-readme-stats.vercel.app/api/pin/?username=razkissos&repo=seniorbot&theme=dracula" />
   </a>
 </p>
 
