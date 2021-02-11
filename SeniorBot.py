@@ -11,15 +11,11 @@
 ###########################################################################################
 
 from discord.ext.commands import *
-from discord import Game, activity, Status
 from discord.ext import commands
-import configparser
-import datetime
+from discord import activity
 import discord
-import json
-import math
+import datetime
 import asyncio
-import requests
 import random
 import os
 
@@ -90,6 +86,8 @@ async def list_servers():
             )
         )
         await asyncio.sleep(3600)
+    print("Bot is closing...")
+    await asyncio.sleep(1)
 
 
 @BOT.event
