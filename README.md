@@ -1,4 +1,3 @@
-# SeniorBot
 <p align="center">
   <a href="https://github.com/RazKissos/SeniorBot">
     <img src="https://cdn.discordapp.com/attachments/591367551892586635/809495742414192670/Profile_Photo_Ubisoft.png" alt="Logo" width="280" height="280">
@@ -11,7 +10,8 @@
   </a>
 </p>
 
-<!-- TABLE OF CONTENTS -->
+# SeniorBot
+
 ## Table of Contents
 
 * [About](#about)
