@@ -1,7 +1,13 @@
 # SeniorBot
 <p align="center">
   <a href="https://github.com/RazKissos/SeniorBot">
-    <img src="https://cdn.discordapp.com/attachments/591367551892586635/809495742414192670/Profile_Photo_Ubisoft.png" alt="Logo" width="320" height="320">
+    <img src="https://cdn.discordapp.com/attachments/591367551892586635/809495742414192670/Profile_Photo_Ubisoft.png" alt="Logo" width="280" height="280">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/RazKissos/SeniorBot">
+    <img align="center" src="https://github-readme-stats.vercel.app/api/pin/?username=razkissos&repo=seniorbot&theme=dracula" />
   </a>
 </p>
 
