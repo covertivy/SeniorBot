@@ -1,14 +1,14 @@
-###########################################################################################
-#                     _____            _             ______       _                       #
-#                    /  ___|          (_)            | ___ \     | |                      #
-#                    \ `--.  ___ _ __  _  ___  _ __  | |_/ / ___ | |_                     #
-#                     `--. \/ _ \ '_ \| |/ _ \| '__| | ___ \/ _ \| __|                    #
-#                    /\__/ /  __/ | | | | (_) | |    | |_/ / (_) | |_                     #
-#                    \____/ \___|_| |_|_|\___/|_|    \____/ \___/ \__|                    #
-#                                                                                         #
-#                                 Creator: Raz Kissos                                     #
-#                    GitHub page: https://github.com/RazKissos/SeniorBot                  #
-###########################################################################################
+#!#########################################################################################!#
+#!                     _____            _             ______       _                       !#
+#!                    /  ___|          (_)            | ___ \     | |                      !#
+#!                    \ `--.  ___ _ __  _  ___  _ __  | |_/ / ___ | |_                     !#
+#!                     `--. \/ _ \ '_ \| |/ _ \| '__| | ___ \/ _ \| __|                    !#
+#!                    /\__/ /  __/ | | | | (_) | |    | |_/ / (_) | |_                     !#
+#!                    \____/ \___|_| |_|_|\___/|_|    \____/ \___/ \__|                    !#
+#!                                                                                         !#
+#!                                 Creator: Raz Kissos                                     !#
+#!                    GitHub page: https://github.com/RazKissos/SeniorBot                  !#
+#!#########################################################################################!#
 
 from discord.ext.commands import *
 from discord.ext import commands
@@ -19,7 +19,7 @@ import asyncio
 import random
 import os
 
-# Get Bot Data initialization class.
+#? Get Bot Data initialization class.
 if os.path.exists("BotData.py"):
     import BotData
 else:
@@ -28,15 +28,16 @@ else:
 
 THIS_FOLDER = os.path.dirname(
     os.path.abspath(__file__)
-)  # Get relative path to our folder.
+)  #? Get relative path to our folder.
 CONFIG_FILE_PATH = os.path.join(
     THIS_FOLDER, "botconfig.cfg"
-)  # Create path of config file. (name can be changed)
+)  #? Create path of config file. (name can be changed)
 DATETIME_OBJ = datetime.datetime
+STARTUP_TIME = DATETIME_OBJ.now()
 
 BOT_DATA = BotData.BotData()  # Our bot data object.
 
-# Read essential files.
+#? Read essential files.
 try:
     BOT_DATA.read_config_data(CONFIG_FILE_PATH)
 except Exception as e:
@@ -44,12 +45,12 @@ except Exception as e:
     exit()
 
 
-# Create and Initialize Bot object.
+#? Create and Initialize Bot object.
 BOT = Bot(
     command_prefix=BOT_DATA.BOT_PREFIX,
     description="Bot by Raz Kissos, helper and useful functions.",
-)  # Create the discord bot.
-BOT.remove_command("help")  # Remove default help command (will replace later).
+)  #? Create the discord bot.
+BOT.remove_command("help")  #? Remove default `help` command (will replace later).
 
 
 @BOT.event
@@ -85,7 +86,7 @@ async def list_servers():
                 DATETIME_OBJ.today()
             )
         )
-        await asyncio.sleep(3600)
+        await asyncio.sleep(3600) # Wait one hour.
     print("Bot is closing...")
     await asyncio.sleep(1)
 
@@ -94,17 +95,16 @@ async def list_servers():
 async def on_command_error(ctx, error):
     """
     Excepts every error the bot receivs and prints it to the console.
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
-        error (from discord.errors): the excepted error.
+    @param ctx (discord.ext.commands.Context): the command context object.
+    @param error (from discord.errors): the excepted error.
     """
     print("[!] ERROR: {}\n".format(error))
 
 
-# Create Asynchronous tasks for the bot before running:
+#? Create Asynchronous tasks for the bot before running:
 asyncio.ensure_future(
     list_servers()
-)  # Run the list_servers() function as an asynchronous coroutine.
+)  #? Run the `list_servers` function as an asynchronous coroutine.
 
 
 ###########################################################################################################################################################################
@@ -120,9 +120,8 @@ asyncio.ensure_future(
 async def help(ctx, command_name: str = None):
     """
     This command replaces the default help command from discord and sends a prettier and formatted help message.
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
-        command_name (str): the command name to get data about (optional).
+    @param ctx (discord.ext.commands.Context): the command context object.
+    @param command_name (str): the command name to get data about (optional).
     """
 
     if command_name is None:  # Check if help was invoked as a specific command help.
@@ -193,9 +192,8 @@ async def help(ctx, command_name: str = None):
 async def mute(ctx, member: discord.Member):
     """
     This command will apply a server mute to the given member and send an embedded message to confirm the mute.
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
-        member (discord.Member): the member to be muted object.
+    @param ctx (discord.ext.commands.Context): the command context object.
+    @param member (discord.Member): the member to be muted object.
     """
     # Check if member is in the guild.
     guild_member = await ctx.guild.fetch_member(member.id)
@@ -236,9 +234,8 @@ async def mute_error(ctx, error):
 async def unmute(ctx, member: discord.Member):
     """
     This command unmutes the server mute that was put on the given member.
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
-        member (discord.Member): the member to be unmuted object.
+    @param ctx (discord.ext.commands.Context): the command context object.
+    @param member (discord.Member): the member to be unmuted object.
     """
     # Check if member is in the guild.
     guild_member = await ctx.guild.fetch_member(member.id)
@@ -279,10 +276,9 @@ async def unmute_error(ctx, error):
 async def kick(ctx, member: discord.Member, *, reason: str):
     """
     This command checks if the given user is indeed a member of the current server, if so it kicks him and sends him the reason.
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
-        member (discord.Member): the member to be kicked.
-        reason (str): the reason for the kick.
+    @param ctx (discord.ext.commands.Context): the command context object.
+    @param member (discord.Member): the member to be kicked.
+    @param reason (str): the reason for the kick.
     """
     # Get the member from the guild, if returned None then member is not in the guild.
     guild_member = await ctx.guild.fetch_member(member.id)
@@ -318,10 +314,9 @@ async def kick_error(ctx, error):
 async def ban(ctx, member: discord.Member, *, reason: str):
     """
     This command checks if the given user is indeed a member of the current server, if so it bans him and sends him the reason.
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
-        member (discord.Member): the member to be banned.
-        reason (str): the reason for the ban.
+    @param ctx (discord.ext.commands.Context): the command context object.
+    @param member (discord.Member): the member to be banned.
+    @param reason (str): the reason for the ban.
     """
     # Get the member from the guild, if returned None then member is not in the guild.
     guild_member = await ctx.guild.fetch_member(member.id)
@@ -357,9 +352,8 @@ async def ban_error(ctx, error):
 async def unban(ctx, name_of_user: str):
     """
     This command checks if the given username belongs to a banned member of the current server, if so it unbans him.
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
-        name_of_user (str): the username of the member to be unbanned.
+    @param ctx (discord.ext.commands.Context): the command context object.
+    @param name_of_user (str): the username of the member to be unbanned.
     """
     guild_bans = await ctx.guild.bans()  # Get all the guild bans.
     banned_users = [ban.user for ban in guild_bans]  # Create a list of banned users.
@@ -398,10 +392,9 @@ async def clean(ctx, member: discord.Member, count: int = 10):
     """
     This command receives a member object and a count (optional), then checks if the member is in the server and if the count is positive.
     If all the checks are passed, The member's messages are stored in a list and then asynchronously deleted.
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
-        member (discord.Member): the member of whom the messages will be deleted.
-        count (int, optional): the amount of messages to be deleted. Defaults to 10.
+    @param ctx (discord.ext.commands.Context): the command context object.
+    @param member (discord.Member): the member of whom the messages will be deleted.
+    @param count (int, optional): the amount of messages to be deleted. Defaults to 10.
     """
     # Perform checks to see if the command can indeed be run in the current context.
     guild_member = await ctx.guild.fetch_member(member.id)
@@ -459,6 +452,37 @@ async def clean_error(ctx, error):
 
 
 @BOT.command(
+    name="botinfo",
+    aliases=["bot"],
+    brief="Shows general information about the bot.",
+    description="Shows the bot information (startup time, github page, etc...).",
+    usage=f"| **{BOT_DATA.BOT_PREFIX}botinfo** -> will print an embed with the general bot information.",
+)
+async def botinfo(ctx):
+    """
+    This command sends an embed to the context's channel which will contain general bot information.
+    @param ctx (discord.ext.commands.Context): the command context object.
+    """
+    print(STARTUP_TIME)
+    embed_ret = discord.Embed(colour=discord.Color.green(), timestamp=ctx.message.created_at, title=f"Bot Info")
+    embed_ret.set_thumbnail(url=BOT.user.avatar_url)
+    embed_ret.add_field(name="❓ Name ❔", value=BOT.user.name)
+    embed_ret.add_field(name="❓ Nickame ❔", value=BOT.user.display_name)
+    embed_ret.add_field(name="⏰ Running Since ⏰", value=STARTUP_TIME.strftime("%a, %#d %B %Y, %I:%M %p UTC"), inline=False)
+    
+    def strfdelta(tdelta, fmt):
+        d = {"days": tdelta.days}
+        d["hours"], rem = divmod(tdelta.seconds, 3600)
+        d["minutes"], d["seconds"] = divmod(rem, 60)
+        return fmt.format(**d)
+    
+    embed_ret.add_field(name="🕗 Total Runtime 🕑", value=strfdelta((DATETIME_OBJ.now() - STARTUP_TIME), "{days} days {hours}:{minutes}:{seconds}"), inline=False)
+    embed_ret.add_field(name="🌍 All Guilds 🌎", value='\n'.join([str('- ' + guild.name) for guild in BOT.guilds]), inline=False)
+    embed_ret.add_field(name="🔗 GitHub Link 🔗", value="https://github.com/RazKissos/SeniorBot", inline=False)
+    embed_ret.set_footer(text="Bot Information")
+    await ctx.channel.send(embed=embed_ret)  # Send the embed.
+
+@BOT.command(
     name="serverinfo",
     aliases=["info"],
     brief="Shows server information.",
@@ -468,20 +492,19 @@ async def clean_error(ctx, error):
 async def serverinfo(ctx):
     """
     This command sends an embed to the context's channel which will contain general server information.
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
+    @param ctx (discord.ext.commands.Context): the command context object.
     """
     guild = ctx.guild  # Get the guild object
     # Create the embed.
     embed_ret = discord.Embed(colour=discord.Color.gold())
     embed_ret.set_thumbnail(url=guild.icon_url)
     embed_ret.set_footer(text="Server Information")
-    embed_ret.add_field(name="Server Name", value=guild.name)
+    embed_ret.add_field(name="❓ Server Name ❔", value=guild.name)
     embed_ret.add_field(
-        name="🧍Memeber Count🧍", value=str(guild.member_count), inline=False
+        name="🧍 Memeber Count 🧍", value=str(guild.member_count), inline=False
     )
     invite_url = await ctx.channel.create_invite(max_age=3600, max_uses=3, unique=False)
-    embed_ret.add_field(name="🔗Invite Link🔗", value=invite_url, inline=False)
+    embed_ret.add_field(name="🔗 Invite Link 🔗", value=invite_url, inline=False)
     await ctx.channel.send(embed=embed_ret)  # Send the embed.
 
 
@@ -496,10 +519,8 @@ async def userinfo(ctx, member: discord.Member = None):
     """
     This command will optionally receive an member object and will return an embedded message containing all the info about the member.
     If the member object is None then the command will return the author's information instead.
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
-        member (discord.Member, optional): the member object of whom's information will be displayed. Defaults to None. if is None then author's
-            info will be displayed instead.
+    @param ctx (discord.ext.commands.Context): the command context object.
+    @param member (discord.Member, optional): the member object of whom's information will be displayed. Defaults to None. if is None then author's info will be displayed instead.
     """
     if member is None:  # Check if member was give, if not choose the author.
         member = ctx.message.author
@@ -551,8 +572,7 @@ async def userinfo(ctx, member: discord.Member = None):
 async def coinflip(ctx):
     """
     This command returns a random response (head / tails) to simulate a coin toss.
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
+    @param ctx (discord.ext.commands.Context): the command context object.
     """
     await ctx.send(
         ctx.message.author.mention + " " + random.choice(["🧿Heads", "🧿Tails"])
@@ -569,10 +589,9 @@ async def coinflip(ctx):
 async def RandInt(ctx, bottom: int, top: int):
     """
     This command will return a random integer in the range of (bottom ; top + 1).
-    Args:
-        ctx (discord.ext.commands.Context): the command context object.
-        bottom (int): bottom range limit.
-        top (int): top range limit.
+    @param ctx (discord.ext.commands.Context): the command context object.
+    @param bottom (int): bottom range limit.
+    @param top (int): top range limit.
     """
     if bottom < top:  # Check if input is valid (top > bottom)
         try:
@@ -591,5 +610,5 @@ async def RandInt(ctx, bottom: int, top: int):
         )
 
 
-# Finally, Run the Bot!
-BOT.run(BOT_DATA.TOKEN)  # Run the bot.
+#! Finally, Run the Bot!
+BOT.run(BOT_DATA.TOKEN)
