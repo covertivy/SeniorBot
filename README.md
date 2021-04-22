@@ -25,7 +25,7 @@
 ### v1.0.0 released at 6/13/2020.
 ### A Discord bot made using the discord.py python module.
 
-This was my first shot at creating a full fledged discord bot.
+This was my first shot at creating a full fledged [discord](https://discord.com) bot.
 I implemented some basic functions (kick, mute, delete messages, etc...)
 >NOTE: Bot is online 24/7. You can add SeniorBot to your server via this link: https://bit.ly/3jG5SwM. if you do add it make sure to place his role at the top so he can manage things correctly with no errors.
 
